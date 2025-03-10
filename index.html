@@ -1,0 +1,488 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 11.0px 'Helvetica Neue'; color: #000000; color: rgba(0, 0, 0, 0.85); -webkit-text-stroke: rgba(0, 0, 0, 0.85); min-height: 13.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Courier; -webkit-text-stroke: #000000}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Courier; color: #848684; -webkit-text-stroke: #848684}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Courier; color: #b9bcba; -webkit-text-stroke: #b9bcba}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Courier; color: #b9bcba; -webkit-text-stroke: #b9bcba; min-height: 16.0px}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Courier; color: #6f90b0; -webkit-text-stroke: #6f90b0}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Courier; color: #a27fad; -webkit-text-stroke: #a27fad}
+    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Courier; color: #a6b255; -webkit-text-stroke: #a6b255}
+    span.s1 {font-kerning: none}
+    span.s2 {font-kerning: none; color: #a27fad; -webkit-text-stroke: 0px #a27fad}
+    span.s3 {font-kerning: none; color: #a6b255; -webkit-text-stroke: 0px #a6b255}
+    span.s4 {font-kerning: none; color: #d4804d; -webkit-text-stroke: 0px #d4804d}
+    span.s5 {font-kerning: none; color: #b9bcba; -webkit-text-stroke: 0px #b9bcba}
+    span.s6 {font-kerning: none; color: #bf5053; -webkit-text-stroke: 0px #bf5053}
+    span.s7 {font-kerning: none; color: #6f90b0; -webkit-text-stroke: 0px #6f90b0}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">Here's the complete script for your quantity surveyor calculator application:</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p3"><span class="s1">javascript</span></p>
+<p class="p4"><span class="s1"><i>// State management</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>let</b></span><span class="s1"> state = {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>currentProjectName: </span><span class="s3">'Untitled Project'</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>savedProjects: [],</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>description: </span><span class="s3">''</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>inputMode: </span><span class="s3">'detailed'</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>materials: </span><span class="s4">0</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>labor: </span><span class="s4">0</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>totalCost: </span><span class="s4">0</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>overhead: </span><span class="s4">15</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>profit: </span><span class="s4">10</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>unit: </span><span class="s3">'m2'</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>savedItems: [],</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>selectedItems: [],</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>expandedItems: [],</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>selectedCombinedItem: </span><span class="s2"><b>null</b></span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>results: {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>subtotal: </span><span class="s4">0</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>overheadAmount: </span><span class="s4">0</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>profitAmount: </span><span class="s4">0</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>total: </span><span class="s4">0</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>ratePerUnit: </span><span class="s4">0</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p5"><span class="s1">};</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// DOM Elements</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>const</b></span><span class="s1"> elements = {};</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Initialize when the document is loaded</i><i></i></span></p>
+<p class="p5"><span class="s1">document.addEventListener(</span><span class="s3">'DOMContentLoaded'</span><span class="s1">, </span><span class="s2"><b>function</b></span><span class="s1">() {</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Get all DOM elements we need to interact with</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>initializeElements();</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Set up event listeners</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>setupEventListeners();</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Load saved data from localStorage</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>loadStateFromStorage();</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Update the UI</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>updateUI();</span></p>
+<p class="p5"><span class="s1">});</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Get references to all DOM elements we need</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> initializeElements() {</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Project controls</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.projectName = document.getElementById(</span><span class="s3">'project-name'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.exportPdf = document.getElementById(</span><span class="s3">'export-pdf'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.saveAsProject = document.getElementById(</span><span class="s3">'save-as-project'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.loadProject = document.getElementById(</span><span class="s3">'load-project'</span><span class="s1">);</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Input fields</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.description = document.getElementById(</span><span class="s3">'description'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.detailedMode = document.getElementById(</span><span class="s3">'detailed-mode'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.totalMode = document.getElementById(</span><span class="s3">'total-mode'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.detailedInputs = document.getElementById(</span><span class="s3">'detailed-inputs'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.totalInputs = document.getElementById(</span><span class="s3">'total-inputs'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.materials = document.getElementById(</span><span class="s3">'materials'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.labor = document.getElementById(</span><span class="s3">'labor'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.totalCost = document.getElementById(</span><span class="s3">'total-cost'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.overhead = document.getElementById(</span><span class="s3">'overhead'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.profit = document.getElementById(</span><span class="s3">'profit'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.unitType = document.getElementById(</span><span class="s3">'unit-type'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.saveCalculation = document.getElementById(</span><span class="s3">'save-calculation'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.clearForm = document.getElementById(</span><span class="s3">'clear-form'</span><span class="s1">);</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Results elements</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.detailedResults = document.getElementById(</span><span class="s3">'detailed-results'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.totalResults = document.getElementById(</span><span class="s3">'total-results'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.materialsResult = document.getElementById(</span><span class="s3">'materials-result'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.laborResult = document.getElementById(</span><span class="s3">'labor-result'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.subtotalResult = document.getElementById(</span><span class="s3">'subtotal-result'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.overheadPercent = document.getElementById(</span><span class="s3">'overhead-percent'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.overheadResult = document.getElementById(</span><span class="s3">'overhead-result'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.profitPercent = document.getElementById(</span><span class="s3">'profit-percent'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.profitResult = document.getElementById(</span><span class="s3">'profit-result'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.totalCostResult = document.getElementById(</span><span class="s3">'total-cost-result'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.finalTotalResult = document.getElementById(</span><span class="s3">'final-total-result'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.rateResult = document.getElementById(</span><span class="s3">'rate-result'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.unitDisplay = document.getElementById(</span><span class="s3">'unit-display'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.unitDisplay2 = document.getElementById(</span><span class="s3">'unit-display-2'</span><span class="s1">);</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Saved items elements</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.savedItemsList = document.getElementById(</span><span class="s3">'saved-items-list'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.selectionActions = document.getElementById(</span><span class="s3">'selection-actions'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.combineSelected = document.getElementById(</span><span class="s3">'combine-selected'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.clearSelection = document.getElementById(</span><span class="s3">'clear-selection'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.selectedCount = document.getElementById(</span><span class="s3">'selected-count'</span><span class="s1">);</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Modal elements</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.saveProjectModal = document.getElementById(</span><span class="s3">'save-project-modal'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.newProjectName = document.getElementById(</span><span class="s3">'new-project-name'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.cancelSaveProject = document.getElementById(</span><span class="s3">'cancel-save-project'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.confirmSaveProject = document.getElementById(</span><span class="s3">'confirm-save-project'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.loadProjectModal = document.getElementById(</span><span class="s3">'load-project-modal'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.projectsList = document.getElementById(</span><span class="s3">'projects-list'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.closeLoadProject = document.getElementById(</span><span class="s3">'close-load-project'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.combineModal = document.getElementById(</span><span class="s3">'combine-modal'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.combineDescription = document.getElementById(</span><span class="s3">'combine-description'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.combineUnit = document.getElementById(</span><span class="s3">'combine-unit'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.combiningCount = document.getElementById(</span><span class="s3">'combining-count'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.combiningItemsList = document.getElementById(</span><span class="s3">'combining-items-list'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.cancelCombine = document.getElementById(</span><span class="s3">'cancel-combine'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.confirmCombine = document.getElementById(</span><span class="s3">'confirm-combine'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.addToCombinedModal = document.getElementById(</span><span class="s3">'add-to-combined-modal'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.targetCombinedName = document.getElementById(</span><span class="s3">'target-combined-name'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.selectableItemsList = document.getElementById(</span><span class="s3">'selectable-items-list'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.cancelAddCombined = document.getElementById(</span><span class="s3">'cancel-add-combined'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.confirmAddCombined = document.getElementById(</span><span class="s3">'confirm-add-combined'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Set up all event listeners</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> setupEventListeners() {</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Input mode switching</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.detailedMode.addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; switchInputMode(</span><span class="s3">'detailed'</span><span class="s1">));</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.totalMode.addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; switchInputMode(</span><span class="s3">'total'</span><span class="s1">));</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Numeric input validation</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.materials.addEventListener(</span><span class="s3">'input'</span><span class="s1">, () =&gt; handleNumericInput(elements.materials, </span><span class="s3">'materials'</span><span class="s1">));</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.labor.addEventListener(</span><span class="s3">'input'</span><span class="s1">, () =&gt; handleNumericInput(elements.labor, </span><span class="s3">'labor'</span><span class="s1">));</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.totalCost.addEventListener(</span><span class="s3">'input'</span><span class="s1">, () =&gt; handleNumericInput(elements.totalCost, </span><span class="s3">'totalCost'</span><span class="s1">));</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.overhead.addEventListener(</span><span class="s3">'input'</span><span class="s1">, () =&gt; handleNumericInput(elements.overhead, </span><span class="s3">'overhead'</span><span class="s1">));</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.profit.addEventListener(</span><span class="s3">'input'</span><span class="s1">, () =&gt; handleNumericInput(elements.profit, </span><span class="s3">'profit'</span><span class="s1">));</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Text inputs</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.description.addEventListener(</span><span class="s3">'input'</span><span class="s1">, (e) =&gt; { state.description = e.target.value; });</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Selects</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.unitType.addEventListener(</span><span class="s3">'change'</span><span class="s1">, (e) =&gt; {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>state.unit = e.target.value;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>updateResults();</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Buttons</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.exportPdf.addEventListener(</span><span class="s3">'click'</span><span class="s1">, exportToPDF);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.saveAsProject.addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; showModal(elements.saveProjectModal));</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.loadProject.addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>populateProjectsList();</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>showModal(elements.loadProjectModal);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.saveCalculation.addEventListener(</span><span class="s3">'click'</span><span class="s1">, saveCalculation);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.clearForm.addEventListener(</span><span class="s3">'click'</span><span class="s1">, clearForm);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.combineSelected.addEventListener(</span><span class="s3">'click'</span><span class="s1">, openCombineModal);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.clearSelection.addEventListener(</span><span class="s3">'click'</span><span class="s1">, clearSelection);</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Modal actions</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.cancelSaveProject.addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; hideModal(elements.saveProjectModal));</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.confirmSaveProject.addEventListener(</span><span class="s3">'click'</span><span class="s1">, saveProjectAs);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.closeLoadProject.addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; hideModal(elements.loadProjectModal));</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.cancelCombine.addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; hideModal(elements.combineModal));</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.confirmCombine.addEventListener(</span><span class="s3">'click'</span><span class="s1">, combineCalculations);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.cancelAddCombined.addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; hideModal(elements.addToCombinedModal));</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.confirmAddCombined.addEventListener(</span><span class="s3">'click'</span><span class="s1">, addToCombinedCalculation);</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Handle numeric input with validation</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> handleNumericInput(element, stateKey) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> numValue = element.value.replace(</span><span class="s6">/[^0-9.]/g</span><span class="s1">, </span><span class="s3">''</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>element.value = numValue;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state[stateKey] = parseFloat(numValue) || </span><span class="s4">0</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>updateResults();</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Switch between detailed and total input modes</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> switchInputMode(mode) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.inputMode = mode;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>if</b></span><span class="s1"> (mode === </span><span class="s3">'detailed'</span><span class="s1">) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.detailedMode.classList.add(</span><span class="s3">'active'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.totalMode.classList.remove(</span><span class="s3">'active'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.detailedInputs.style.display = </span><span class="s3">'block'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.totalInputs.style.display = </span><span class="s3">'none'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.detailedResults.style.display = </span><span class="s3">'block'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.totalResults.style.display = </span><span class="s3">'none'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>} </span><span class="s2"><b>else</b></span><span class="s1"> {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.detailedMode.classList.remove(</span><span class="s3">'active'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.totalMode.classList.add(</span><span class="s3">'active'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.detailedInputs.style.display = </span><span class="s3">'none'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.totalInputs.style.display = </span><span class="s3">'block'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.detailedResults.style.display = </span><span class="s3">'none'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.totalResults.style.display = </span><span class="s3">'block'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>updateResults();</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Update calculation results</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> updateResults() {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>let</b></span><span class="s1"> subtotal, overheadAmount, profitAmount, total;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>if</b></span><span class="s1"> (state.inputMode === </span><span class="s3">'detailed'</span><span class="s1">) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>subtotal = state.materials + state.labor;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>overheadAmount = subtotal * (state.overhead / </span><span class="s4">100</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>profitAmount = (subtotal + overheadAmount) * (state.profit / </span><span class="s4">100</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>total = subtotal + overheadAmount + profitAmount;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>} </span><span class="s2"><b>else</b></span><span class="s1"> {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>subtotal = </span><span class="s4">0</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>overheadAmount = </span><span class="s4">0</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>profitAmount = </span><span class="s4">0</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>total = state.totalCost;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p6"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.results = {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>subtotal,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>overheadAmount,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>profitAmount,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>total,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>ratePerUnit: total</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Update display</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.materialsResult.textContent = formatCurrency(state.materials);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.laborResult.textContent = formatCurrency(state.labor);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.subtotalResult.textContent = formatCurrency(subtotal);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.overheadPercent.textContent = state.overhead;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.overheadResult.textContent = formatCurrency(overheadAmount);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.profitPercent.textContent = state.profit;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.profitResult.textContent = formatCurrency(profitAmount);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.totalCostResult.textContent = formatCurrency(state.totalCost);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.finalTotalResult.textContent = formatCurrency(total);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.rateResult.textContent = formatCurrency(state.results.ratePerUnit);</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Update unit display</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> unitDisplayText = getUnitDisplayText(state.unit);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.unitDisplay.textContent = unitDisplayText;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.unitDisplay2.textContent = unitDisplayText;</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Format currency</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> formatCurrency(value) {</span></p>
+<p class="p7"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s2"><b>return</b></span><span class="s5"> </span><span class="s2"><b>new</b></span><span class="s5"> </span><span class="s1">Intl.NumberFormat</span><span class="s5">(</span><span class="s3">'en-GB'</span><span class="s5">, {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>style: </span><span class="s3">'currency'</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>currency: </span><span class="s3">'GBP'</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>minimumFractionDigits: </span><span class="s4">2</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>maximumFractionDigits: </span><span class="s4">2</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}).format(value);</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Get display text for unit</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> getUnitDisplayText(unit) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>switch</b></span><span class="s1">(unit) {</span></p>
+<p class="p8"><span class="s5"><span class="Apple-converted-space">    </span></span><span class="s1"><b>case</b></span><span class="s5"> </span><span class="s3">'m2'</span><span class="s5">: </span><span class="s1"><b>return</b></span><span class="s5"> </span><span class="s3">'m²'</span><span class="s5">;</span></p>
+<p class="p8"><span class="s5"><span class="Apple-converted-space">    </span></span><span class="s1"><b>case</b></span><span class="s5"> </span><span class="s3">'m'</span><span class="s5">: </span><span class="s1"><b>return</b></span><span class="s5"> </span><span class="s3">'m'</span><span class="s5">;</span></p>
+<p class="p9"><span class="s5"><span class="Apple-converted-space">    </span></span><span class="s2"><b>case</b></span><span class="s5"> </span><span class="s1">'item'</span><span class="s5">: </span><span class="s2"><b>return</b></span><span class="s5"> </span><span class="s1">'item'</span><span class="s5">;</span></p>
+<p class="p8"><span class="s5"><span class="Apple-converted-space">    </span></span><span class="s1"><b>case</b></span><span class="s5"> </span><span class="s3">'nr'</span><span class="s5">: </span><span class="s1"><b>return</b></span><span class="s5"> </span><span class="s3">'Nr'</span><span class="s5">;</span></p>
+<p class="p8"><span class="s5"><span class="Apple-converted-space">    </span></span><span class="s1"><b>default</b></span><span class="s5">: </span><span class="s1"><b>return</b></span><span class="s5"> unit;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Save current calculation</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> saveCalculation() {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>if</b></span><span class="s1"> (!state.description.trim()) {</span></p>
+<p class="p9"><span class="s5"><span class="Apple-converted-space">    </span>alert(</span><span class="s1">'Please enter a description before saving'</span><span class="s5">);</span></p>
+<p class="p8"><span class="s5"><span class="Apple-converted-space">    </span></span><span class="s1"><b>return</b></span><span class="s5">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p6"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> itemToSave = {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>id: Date.now(),</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>description: state.description,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>inputMode: state.inputMode,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>materials: state.inputMode === </span><span class="s3">'detailed'</span><span class="s1"> ? state.materials : </span><span class="s4">0</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>labor: state.inputMode === </span><span class="s3">'detailed'</span><span class="s1"> ? state.labor : </span><span class="s4">0</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>totalCost: state.inputMode === </span><span class="s3">'total'</span><span class="s1"> ? state.totalCost : </span><span class="s4">0</span><span class="s1">,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>overhead: state.overhead,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>profit: state.profit,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>unit: state.unit,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>results: state.results,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>isCombined: false,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>childItems: []</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.savedItems.push(itemToSave);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>saveCurrentProject();</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>renderSavedItems();</span></p>
+<p class="p9"><span class="s5"><span class="Apple-converted-space">  </span>alert(</span><span class="s1">'Item saved successfully'</span><span class="s5">);</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Clear the form</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> clearForm() {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.description = </span><span class="s3">''</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.materials = </span><span class="s4">0</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.labor = </span><span class="s4">0</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.totalCost = </span><span class="s4">0</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.description.value = </span><span class="s3">''</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.materials.value = </span><span class="s3">'0'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.labor.value = </span><span class="s3">'0'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.totalCost.value = </span><span class="s3">'0'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>updateResults();</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Save the current project</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> saveCurrentProject() {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> projectData = {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>name: state.currentProjectName,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>items: state.savedItems,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>lastUpdated: </span><span class="s2"><b>new</b></span><span class="s1"> </span><span class="s7">Date</span><span class="s1">().toISOString()</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Update the project in the projects list</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> existingProjectIndex = state.savedProjects.findIndex(p =&gt; p.name === state.currentProjectName);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>if</b></span><span class="s1"> (existingProjectIndex &gt;= </span><span class="s4">0</span><span class="s1">) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>state.savedProjects[existingProjectIndex] = projectData;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>} </span><span class="s2"><b>else</b></span><span class="s1"> {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>state.savedProjects.push(projectData);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p6"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Save to localStorage</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>saveStateToStorage();</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Save project with a new name</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> saveProjectAs() {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> newName = elements.newProjectName.value.trim();</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>if</b></span><span class="s1"> (!newName) {</span></p>
+<p class="p9"><span class="s5"><span class="Apple-converted-space">    </span>alert(</span><span class="s1">'Please enter a project name'</span><span class="s5">);</span></p>
+<p class="p8"><span class="s5"><span class="Apple-converted-space">    </span></span><span class="s1"><b>return</b></span><span class="s5">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p6"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Check if project name already exists</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> existingProject = state.savedProjects.find(p =&gt; p.name === newName);</span></p>
+<p class="p9"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s2"><b>if</b></span><span class="s5"> (existingProject &amp;&amp; !confirm(</span><span class="s1">`A project named "</span><span class="s5">${newName}</span><span class="s1">" already exists. Do you want to overwrite it?`</span><span class="s5">)) {</span></p>
+<p class="p8"><span class="s5"><span class="Apple-converted-space">    </span></span><span class="s1"><b>return</b></span><span class="s5">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p6"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.currentProjectName = newName;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.projectName.textContent = newName;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>saveCurrentProject();</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>hideModal(elements.saveProjectModal);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.newProjectName.value = </span><span class="s3">''</span><span class="s1">;</span></p>
+<p class="p9"><span class="s5"><span class="Apple-converted-space">  </span>alert(</span><span class="s1">'Project saved successfully'</span><span class="s5">);</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Populate the projects list in the load project modal</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> populateProjectsList() {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.projectsList.innerHTML = </span><span class="s3">''</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>if</b></span><span class="s1"> (state.savedProjects.length === </span><span class="s4">0</span><span class="s1">) {</span></p>
+<p class="p9"><span class="s5"><span class="Apple-converted-space">    </span>elements.projectsList.innerHTML = </span><span class="s1">'&lt;div class="no-projects"&gt;No saved projects found&lt;/div&gt;'</span><span class="s5">;</span></p>
+<p class="p8"><span class="s5"><span class="Apple-converted-space">    </span></span><span class="s1"><b>return</b></span><span class="s5">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p6"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.savedProjects.forEach(project =&gt; {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s2"><b>const</b></span><span class="s1"> projectElement = document.createElement(</span><span class="s3">'div'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>projectElement.className = </span><span class="s3">'projects-list-item'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>projectElement.innerHTML = </span><span class="s3">`</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="project-list-info"&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">        </span>&lt;h4&gt;</span><span class="s5">${project.name}</span><span class="s1">&lt;/h4&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="project-list-meta"&gt;</span></p>
+<p class="p5"><span class="s3"><span class="Apple-converted-space">          </span></span><span class="s1">${project.items?.length || </span><span class="s4">0</span><span class="s1">}</span><span class="s3"> items | Updated: </span><span class="s1">${formatDate(project.lastUpdated)}</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="project-list-actions"&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-primary load-project-btn"&gt;Load&lt;/button&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-default delete-project-btn"&gt;Delete&lt;/button&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">    </span>`</span><span class="s5">;</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">    </span></span><span class="s1"><i>// Add event listeners</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>projectElement.querySelector(</span><span class="s3">'.load-project-btn'</span><span class="s1">).addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span>loadProject(project);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span>hideModal(elements.loadProjectModal);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>projectElement.querySelector(</span><span class="s3">'.delete-project-btn'</span><span class="s1">).addEventListener(</span><span class="s3">'click'</span><span class="s1">, () =&gt; {</span></p>
+<p class="p9"><span class="s5"><span class="Apple-converted-space">      </span></span><span class="s2"><b>if</b></span><span class="s5"> (confirm(</span><span class="s1">`Are you sure you want to delete the project "</span><span class="s5">${project.name}</span><span class="s1">"?`</span><span class="s5">)) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>deleteProject(project.name);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>populateProjectsList();</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.projectsList.appendChild(projectElement);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Load a project</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> loadProject(project) {</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Ensure all items have required properties for backward compatibility</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> itemsWithRequiredProps = (project.items || []).map(item =&gt; ({</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>...item,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>isCombined: item.isCombined || false,</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>childItems: item.childItems || []</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}));</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.savedItems = itemsWithRequiredProps;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.currentProjectName = project.name;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.selectedItems = [];</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.expandedItems = [];</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.projectName.textContent = project.name;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>renderSavedItems();</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>saveStateToStorage();</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Delete a project</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> deleteProject(projectName) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>state.savedProjects = state.savedProjects.filter(p =&gt; p.name !== projectName);</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// If current project is deleted, reset to default</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>if</b></span><span class="s1"> (state.currentProjectName === projectName) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>state.currentProjectName = </span><span class="s3">'Untitled Project'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>state.savedItems = [];</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.projectName.textContent = </span><span class="s3">'Untitled Project'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>renderSavedItems();</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>saveStateToStorage();</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Render saved items</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> renderSavedItems() {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>elements.savedItemsList.innerHTML = </span><span class="s3">''</span><span class="s1">;</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Filter out items that are components of combined items</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> topLevelItems = state.savedItems.filter(item =&gt; {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s2"><b>const</b></span><span class="s1"> isComponentOfCombined = state.savedItems.some(</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span>combinedItem =&gt;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>combinedItem.isCombined &amp;&amp;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>combinedItem.childItems &amp;&amp;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>combinedItem.childItems.includes(item.id)</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s2"><b>return</b></span><span class="s1"> !isComponentOfCombined;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>if</b></span><span class="s1"> (topLevelItems.length === </span><span class="s4">0</span><span class="s1">) {</span></p>
+<p class="p9"><span class="s5"><span class="Apple-converted-space">    </span>elements.savedItemsList.innerHTML = </span><span class="s1">'&lt;div class="no-items"&gt;No saved calculations yet&lt;/div&gt;'</span><span class="s5">;</span></p>
+<p class="p8"><span class="s5"><span class="Apple-converted-space">    </span></span><span class="s1"><b>return</b></span><span class="s5">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p6"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>topLevelItems.forEach(item =&gt; {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s2"><b>const</b></span><span class="s1"> itemElement = renderSavedItem(item);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.savedItemsList.appendChild(itemElement);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Show/hide selection actions</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>if</b></span><span class="s1"> (state.selectedItems.length &gt; </span><span class="s4">0</span><span class="s1">) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.selectionActions.style.display = </span><span class="s3">'flex'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.selectedCount.textContent = state.selectedItems.length;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>} </span><span class="s2"><b>else</b></span><span class="s1"> {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>elements.selectionActions.style.display = </span><span class="s3">'none'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p5"><span class="s1">}</span></p>
+<p class="p6"><span class="s1"></span><br></p>
+<p class="p4"><span class="s1"><i>// Render a single saved item</i><i></i></span></p>
+<p class="p5"><span class="s2"><b>function</b></span><span class="s1"> renderSavedItem(item) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> itemElement = document.createElement(</span><span class="s3">'div'</span><span class="s1">);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>itemElement.className = </span><span class="s3">'saved-item'</span><span class="s1">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>itemElement.dataset.id = item.id;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> isExpanded = state.expandedItems.includes(item.id);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> hasChildren = item.isCombined &amp;&amp; item.childItems &amp;&amp; item.childItems.length &gt; </span><span class="s4">0</span><span class="s1">;</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Create the item header</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>const</b></span><span class="s1"> headerHTML = </span><span class="s3">`</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="saved-item-header"&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="saved-item-info"&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">        </span>&lt;input type="checkbox" class="saved-item-checkbox" </span><span class="s5">${state.selectedItems.includes(item.id) ? </span><span class="s1">'checked'</span><span class="s5"> : </span><span class="s1">''</span><span class="s5">}</span><span class="s1">&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="saved-item-title"&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s5">${hasChildren ? </span><span class="s1">`&lt;span class="expander"&gt;</span><span class="s5">${isExpanded ? </span><span class="s1">'▼'</span><span class="s5"> : </span><span class="s1">'►'</span><span class="s5">}</span><span class="s1">&lt;/span&gt;`</span><span class="s5"> : </span><span class="s1">''</span><span class="s5">}</span></p>
+<p class="p5"><span class="s3"><span class="Apple-converted-space">            </span></span><span class="s1">${item.description}</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s5">${item.isCombined ? </span><span class="s1">'&lt;span class="combined-badge"&gt;Combined&lt;/span&gt;'</span><span class="s5"> : </span><span class="s1">''</span><span class="s5">}</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="saved-item-details"&gt;</span></p>
+<p class="p5"><span class="s3"><span class="Apple-converted-space">            </span></span><span class="s1">${formatCurrency(item.results.total)}</span><span class="s3"> per </span><span class="s1">${getUnitDisplayText(item.unit)}</span><span class="s3"> |</span></p>
+<p class="p5"><span class="s3"><span class="Apple-converted-space">            </span></span><span class="s1">${item.inputMode === </span><span class="s3">'detailed'</span><span class="s1"> ?</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">              </span></span><span class="s3">`Materials: </span><span class="s1">${formatCurrency(item.materials)}</span><span class="s3">, Labour: </span><span class="s1">${formatCurrency(item.labor)}</span><span class="s3">`</span><span class="s1"> :</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">              </span></span><span class="s3">`Base Cost: </span><span class="s1">${formatCurrency(item.totalCost)}</span><span class="s3">`</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="saved-item-actions"&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s5">${item.isCombined ? </span><span class="s1">`&lt;button class="btn btn-success add-to-combined-btn"&gt;Add Items&lt;/button&gt;`</span><span class="s5"> : </span><span class="s1">''</span><span class="s5">}</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-primary edit-btn"&gt;Edit&lt;/button&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-default delete-btn"&gt;Delete&lt;/button&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p9"><span class="s1"><span class="Apple-converted-space">  </span>`</span><span class="s5">;</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>itemElement.innerHTML = headerHTML;</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Add checkbox event listener</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>itemElement.querySelector(</span><span class="s3">'.saved-item-checkbox'</span><span class="s1">).addEventListener(</span><span class="s3">'click'</span><span class="s1">, (e) =&gt; {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>toggleItemSelection(item.id);</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>e.stopPropagation();</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p4"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1"><i>// Add expander event listener if has children</i><i></i></span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span></span><span class="s2"><b>if</b></span><span class="s1"> (hasChildren) {</span></p>
+<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>itemElement.querySelector(</span><span class="s3">'.expander'</span><span class="s1">).addEventListener(</span><span class="s3">'click'</span><span class="s1">, (e) =&gt; {</span></p>
+</body>
+</html>

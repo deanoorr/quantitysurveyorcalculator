@@ -403,6 +403,59 @@
             display: flex;
             gap: 4px;
         }
+        
+        /* Dropdown styles for combined items */
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .dropdown-icon {
+            transition: transform 0.3s ease;
+            display: inline-block;
+            font-size: 10px;
+        }
+        
+        .children-dropdown {
+            margin-top: 10px;
+            border-top: 1px dashed #e5e7eb;
+            padding-top: 10px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .children-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .children-table th {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 600;
+            color: #4b5563;
+        }
+        
+        .children-table td {
+            padding: 8px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .children-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .item-count-badge {
+            font-size: 12px;
+            background-color: #f3f4f6;
+            color: #6b7280;
+            padding: 2px 6px;
+            border-radius: 12px;
+            margin-left: 8px;
+        }
 
         /* Modal Styles */
         .modal {

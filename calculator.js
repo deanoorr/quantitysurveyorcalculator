@@ -1,4 +1,4 @@
-// State management
+// State managemen
 let state = {
     currentProjectName: 'Untitled Project',
     savedProjects: [],

@@ -1,556 +1,3607 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quantity Surveyor Calculator</title>
-  <style>
-    /* Basic styling */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 10px;
-    }
-    
-    h1 {
-      margin: 0;
-      color: #4f46e5;
-    }
-    
-    .project-controls {
-      display: flex;
-      gap: 10px;
-    }
-    
-    .input-section, .results-section, .saved-items-section {
-      background-color: #f9fafb;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .input-group {
-      margin-bottom: 15px;
-    }
-    
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 500;
-    }
-    
-    input, select, textarea {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-    
-    .input-tabs {
-      display: flex;
-      margin-bottom: 15px;
-      border-bottom: 1px solid #ddd;
-    }
-    
-    .input-tab {
-      padding: 8px 16px;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-    }
-    
-    .input-tab.active {
-      border-bottom: 2px solid #4f46e5;
-      font-weight: 500;
-      color: #4f46e5;
-    }
-    
-    .results-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    .results-table td {
-      padding: 8px;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .results-table td:first-child {
-      font-weight: 500;
-    }
-    
-    .results-table td:last-child {
-      text-align: right;
-      font-family: monospace;
-      font-size: 14px;
-    }
-    
-    .btn {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.2s;
-    }
-    
-    .btn-primary {
-      background-color: #4f46e5;
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      background-color: #4338ca;
-    }
-    
-    .btn-default {
-      background-color: #e5e7eb;
-      color: #374151;
-    }
-    
-    .btn-default:hover {
-      background-color: #d1d5db;
-    }
-    
-    .btn-success {
-      background-color: #10b981;
-      color: white;
-    }
-    
-    .btn-success:hover {
-      background-color: #059669;
-    }
-    
-    .saved-item {
-      background-color: white;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      border: 1px solid #eee;
-      overflow: hidden;
-    }
-    
-    .saved-item-header {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .saved-item-info {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-    
-    .saved-item-title {
-      font-weight: 500;
-      margin-bottom: 4px;
-    }
-    
-    .saved-item-details {
-      font-size: 13px;
-      color: #6b7280;
-    }
-    
-    .saved-item-actions {
-      display: flex;
-      gap: 8px;
-    }
-    
-    .saved-item-children {
-      padding: 12px;
-      background-color: #f9fafb;
-    }
-    
-    .child-item {
-      padding: 8px;
-      margin-bottom: 8px;
-      border-radius: 4px;
-      background-color: white;
-      border: 1px solid #eee;
-    }
-    
-    .selection-actions {
-      display: none;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 15px;
-      padding: 10px;
-      background-color: #eef2ff;
-      border-radius: 6px;
-    }
-    
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .modal-content {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-    
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    
-    .modal-title {
-      margin: 0;
-      font-size: 18px;
-    }
-    
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    
-    .combined-badge {
-      font-size: 11px;
-      background-color: #4f46e5;
-      color: white;
-      padding: 2px 6px;
-      border-radius: 10px;
-      margin-left: 6px;
-    }
-    
-    .expander {
-      cursor: pointer;
-      margin-right: 5px;
-      display: inline-block;
-      width: 16px;
-      text-align: center;
-    }
-    
-    .no-items, .no-projects {
-      text-align: center;
-      padding: 20px;
-      color: #6b7280;
-    }
-    
-    .projects-list-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .project-list-meta {
-      font-size: 13px;
-      color: #6b7280;
-      margin-top: 4px;
-    }
-  </style>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Rate Calculator for Quantity Surveyors</title>
+
+    <style>
+
+        /* Base Styles */
+
+        * {
+
+            box-sizing: border-box;
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+
+
+        body {
+
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+            background-color: #f9fafb;
+
+            color: #1f2937;
+
+            padding: 20px;
+
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+        }
+
+
+
+        .app-container {
+
+            padding: 16px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 16px;
+
+        }
+
+
+
+        /* Typography */
+
+        h1 {
+
+            font-size: 20px;
+
+            font-weight: 600;
+
+            color: #4f46e5;
+
+        }
+
+
+
+        h2 {
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+            color: #1f2937;
+
+            margin-bottom: 16px;
+
+            display: flex;
+
+            align-items: center;
+
+        }
+
+
+
+        h3 {
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            margin-bottom: 12px;
+
+        }
+
+
+
+        /* Header Styles */
+
+        .header {
+
+            background-color: #ffffff;
+
+            border-radius: 8px;
+
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+            padding: 16px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+
+        }
+
+
+
+        #project-info {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+        }
+
+
+
+        #project-name {
+
+            font-weight: 600;
+
+            font-size: 18px;
+
+        }
+
+
+
+        .project-actions {
+
+            display: flex;
+
+            gap: 8px;
+
+            flex-wrap: wrap;
+
+        }
+
+
+
+        /* Calculator Container */
+
+        .calculator-container {
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 16px;
+
+            background-color: #ffffff;
+
+            border-radius: 8px;
+
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+            padding: 16px;
+
+        }
+
+
+
+        @media (max-width: 768px) {
+
+            .calculator-container {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+
+
+        .inputs-section, .results-section {
+
+            padding: 12px;
+
+        }
+
+
+
+        .results-section {
+
+            background-color: #f8fafc;
+
+            border-radius: 6px;
+
+            border: 1px solid #e2e8f0;
+
+        }
+
+
+
+        /* Form Styles */
+
+        .form-group {
+
+            margin-bottom: 16px;
+
+        }
+
+
+
+        label {
+
+            display: block;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+            margin-bottom: 6px;
+
+            color: #4b5563;
+
+        }
+
+
+
+        input, textarea, select {
+
+            width: 100%;
+
+            padding: 8px 12px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 4px;
+
+            font-size: 14px;
+
+            transition: border-color 0.2s;
+
+        }
+
+
+
+        input:focus, textarea:focus, select:focus {
+
+            outline: none;
+
+            border-color: #4f46e5;
+
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+
+        }
+
+
+
+        textarea {
+
+            height: 80px;
+
+            resize: vertical;
+
+        }
+
+
+
+        .hint {
+
+            font-size: 12px;
+
+            color: #6b7280;
+
+            margin-top: 4px;
+
+        }
+
+
+
+        /* Input Mode Selector */
+
+        .input-mode-selector {
+
+            display: flex;
+
+            margin-bottom: 16px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 4px;
+
+            overflow: hidden;
+
+        }
+
+
+
+        .mode-btn {
+
+            flex: 1;
+
+            padding: 8px 0;
+
+            text-align: center;
+
+            background-color: #f3f4f6;
+
+            border: none;
+
+            cursor: pointer;
+
+            transition: background-color 0.2s;
+
+            font-size: 14px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+
+
+        .mode-btn.active {
+
+            background-color: #4f46e5;
+
+            color: white;
+
+            font-weight: 500;
+
+        }
+
+
+
+        /* Input with Prefix/Suffix */
+
+        .input-with-prefix, .input-with-suffix {
+
+            position: relative;
+
+            display: flex;
+
+            align-items: center;
+
+        }
+
+
+
+        .prefix {
+
+            position: absolute;
+
+            left: 12px;
+
+            color: #6b7280;
+
+        }
+
+
+
+        .input-with-prefix input {
+
+            padding-left: 24px;
+
+        }
+
+
+
+        .suffix {
+
+            position: absolute;
+
+            right: 12px;
+
+            color: #6b7280;
+
+        }
+
+
+
+        .input-with-suffix input {
+
+            padding-right: 24px;
+
+        }
+
+
+
+        /* Button Styles */
+
+        .btn {
+
+            padding: 8px 12px;
+
+            border-radius: 4px;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+            cursor: pointer;
+
+            border: 1px solid transparent;
+
+            transition: all 0.2s;
+
+        }
+
+
+
+        .btn-primary {
+
+            background-color: #4f46e5;
+
+            color: white;
+
+        }
+
+
+
+        .btn-primary:hover {
+
+            background-color: #4338ca;
+
+        }
+
+
+
+        .btn-success {
+
+            background-color: #10b981;
+
+            color: white;
+
+        }
+
+
+
+        .btn-success:hover {
+
+            background-color: #059669;
+
+        }
+
+
+
+        .btn-default {
+
+            background-color: #ffffff;
+
+            color: #4b5563;
+
+            border-color: #d1d5db;
+
+        }
+
+
+
+        .btn-default:hover {
+
+            background-color: #f9fafb;
+
+        }
+
+
+
+        .button-group {
+
+            display: flex;
+
+            gap: 8px;
+
+        }
+
+
+
+        /* Results Styles */
+
+        .result-row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            padding: 8px 0;
+
+            border-bottom: 1px solid #e5e7eb;
+
+        }
+
+
+
+        .result-row.total {
+
+            border-bottom: none;
+
+            font-weight: 600;
+
+            font-size: 16px;
+
+            padding-top: 12px;
+
+        }
+
+
+
+        .rate-box {
+
+            background-color: #eff6ff;
+
+            border: 1px solid #dbeafe;
+
+            border-radius: 6px;
+
+            padding: 16px;
+
+            margin-top: 16px;
+
+            text-align: center;
+
+        }
+
+
+
+        .rate-box h3 {
+
+            color: #1e40af;
+
+            margin-bottom: 8px;
+
+        }
+
+
+
+        #rate-result {
+
+            font-size: 24px;
+
+            font-weight: 700;
+
+            color: #1d4ed8;
+
+            margin-bottom: 4px;
+
+        }
+
+
+
+        /* Saved Items Section */
+
+        .saved-items-container {
+
+            background-color: #ffffff;
+
+            border-radius: 8px;
+
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+            padding: 16px;
+
+            flex-grow: 1;
+
+            overflow-y: auto;
+
+        }
+
+
+
+        .saved-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 16px;
+
+            padding-bottom: 12px;
+
+            border-bottom: 1px solid #e5e7eb;
+
+        }
+
+
+
+        .saved-item {
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 8px;
+
+            padding: 16px;
+
+            margin-bottom: 12px;
+
+            background-color: #ffffff;
+
+            transition: box-shadow 0.2s;
+
+        }
+
+
+
+        .saved-item:hover {
+
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+        }
+
+
+
+        .saved-item-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+        }
+
+
+
+        .saved-item-info {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+        }
+
+
+
+        .saved-item-checkbox {
+
+            width: 18px;
+
+            height: 18px;
+
+        }
+
+
+
+        .saved-item-title {
+
+            font-weight: 600;
+
+            font-size: 16px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+        }
+
+
+
+        .combined-badge {
+
+            font-size: 12px;
+
+            background-color: #e0e7ff;
+
+            color: #4338ca;
+
+            padding: 2px 6px;
+
+            border-radius: 12px;
+
+            font-weight: 500;
+
+        }
+
+
+
+        .saved-item-details {
+
+            margin-top: 4px;
+
+            font-size: 13px;
+
+            color: #6b7280;
+
+        }
+
+
+
+        .saved-item-actions {
+
+            display: flex;
+
+            gap: 8px;
+
+            flex-wrap: wrap;
+
+        }
+
+
+
+        .child-items {
+
+            margin-top: 12px;
+
+            margin-left: 24px;
+
+            padding-left: 12px;
+
+            border-left: 2px solid #e0e7ff;
+
+        }
+
+
+
+        .child-item {
+
+            padding: 10px 0;
+
+            border-bottom: 1px solid #f3f4f6;
+
+        }
+
+
+
+        .child-item:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+
+        .child-item-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+        }
+
+
+
+        .child-item-title {
+
+            font-weight: 500;
+
+            font-size: 14px;
+
+        }
+
+
+
+        .child-item-details {
+
+            font-size: 12px;
+
+            color: #6b7280;
+
+            margin-top: 2px;
+
+        }
+
+
+
+        .child-item-actions {
+
+            display: flex;
+
+            gap: 4px;
+
+        }
+
+
+
+        /* Modal Styles */
+
+        .modal {
+
+            display: none;
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            background-color: rgba(0, 0, 0, 0.5);
+
+            justify-content: center;
+
+            align-items: center;
+
+            z-index: 1000;
+
+        }
+
+
+
+        .modal.show {
+
+            display: flex;
+
+        }
+
+
+
+        .modal-content {
+
+            background-color: #ffffff;
+
+            border-radius: 8px;
+
+            padding: 24px;
+
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+            width: 100%;
+
+            max-width: 500px;
+
+            max-height: 90vh;
+
+            overflow-y: auto;
+
+        }
+
+
+
+        .modal-actions {
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 8px;
+
+            margin-top: 24px;
+
+        }
+
+
+
+        .projects-list, .combining-items, .selectable-items {
+
+            margin-top: 16px;
+
+        }
+
+
+
+        .projects-list-item {
+
+            padding: 12px;
+
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+        }
+
+
+
+        .projects-list-item:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+
+        .project-list-info h4 {
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+        }
+
+
+
+        .project-list-meta {
+
+            font-size: 12px;
+
+            color: #6b7280;
+
+            margin-top: 2px;
+
+        }
+
+
+
+        .combining-items h4, .selectable-items h4 {
+
+            font-size: 14px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+
+        .combining-items ul {
+
+            list-style-type: disc;
+
+            padding-left: 24px;
+
+        }
+
+
+
+        .combining-items li {
+
+            padding: 4px 0;
+
+            font-size: 13px;
+
+        }
+
+
+
+        .selectable-item {
+
+            padding: 8px 12px;
+
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+        }
+
+
+
+        .selectable-item:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+
+        .selectable-item-info {
+
+            font-size: 13px;
+
+        }
+
+
+
+        .selectable-item-title {
+
+            font-weight: 500;
+
+        }
+
+
+
+        .selectable-item-price {
+
+            font-size: 12px;
+
+            color: #6b7280;
+
+        }
+
+
+
+        .combined-target {
+
+            background-color: #f0f9ff;
+
+            border: 1px solid #bae6fd;
+
+            border-radius: 4px;
+
+            padding: 12px;
+
+            margin-bottom: 16px;
+
+        }
+
+
+
+        .combined-target p {
+
+            font-size: 14px;
+
+            color: #0c4a6e;
+
+        }
+
+
+
+        .combined-target span {
+
+            font-weight: 600;
+
+        }
+
+
+
+        /* Scrollable area for lists */
+
+        #projects-list, #selectable-items-list {
+
+            max-height: 300px;
+
+            overflow-y: auto;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 4px;
+
+        }
+
+        
+
+        .no-items, .no-projects {
+
+            padding: 20px;
+
+            text-align: center;
+
+            color: #6b7280;
+
+        }
+
+    </style>
+
 </head>
+
 <body>
-  <div class="header">
-    <h1>Quantity Surveyor Calculator</h1>
-    <div class="project-controls">
-      <span id="project-name">Untitled Project</span>
-      <button id="export-pdf" class="btn btn-default">Export PDF</button>
-      <button id="save-as-project" class="btn btn-primary">Save As</button>
-      <button id="load-project" class="btn btn-default">Load Project</button>
-    </div>
-  </div>
-  
-  <div class="input-section">
-    <div class="input-group">
-      <label for="description">Description</label>
-      <textarea id="description" rows="2" placeholder="Enter description"></textarea>
-    </div>
-    
-    <div class="input-tabs">
-      <div id="detailed-mode" class="input-tab active">Detailed Input</div>
-      <div id="total-mode" class="input-tab">Total Input</div>
-    </div>
-    
-    <div id="detailed-inputs">
-      <div class="input-group">
-        <label for="materials">Materials Cost (£)</label>
-        <input type="text" id="materials" value="0">
-      </div>
-      <div class="input-group">
-        <label for="labor">Labor Cost (£)</label>
-        <input type="text" id="labor" value="0">
-      </div>
-    </div>
-    
-    <div id="total-inputs" style="display: none;">
-      <div class="input-group">
-        <label for="total-cost">Total Base Cost (£)</label>
-        <input type="text" id="total-cost" value="0">
-      </div>
-    </div>
-    
-    <div class="input-group">
-      <label for="overhead">Overhead (%)</label>
-      <input type="text" id="overhead" value="15">
-    </div>
-    
-    <div class="input-group">
-      <label for="profit">Profit (%)</label>
-      <input type="text" id="profit" value="10">
-    </div>
-    
-    <div class="input-group">
-      <label for="unit-type">Unit Type</label>
-      <select id="unit-type">
-        <option value="m2">Square Meter (m²)</option>
-        <option value="m">Linear Meter (m)</option>
-        <option value="item">Item</option>
-        <option value="nr">Number (Nr)</option>
-      </select>
-    </div>
-    
-    <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button id="save-calculation" class="btn btn-primary">Save Calculation</button>
-      <button id="clear-form" class="btn btn-default">Clear Form</button>
-    </div>
-  </div>
-  
-  <div class="results-section">
-    <h2>Results</h2>
-    
-    <div id="detailed-results">
-      <table class="results-table">
-        <tr>
-          <td>Materials</td>
-          <td id="materials-result">£0.00</td>
-        </tr>
-        <tr>
-          <td>Labor</td>
-          <td id="labor-result">£0.00</td>
-        </tr>
-        <tr>
-          <td>Subtotal</td>
-          <td id="subtotal-result">£0.00</td>
-        </tr>
-        <tr>
-          <td>Overhead (<span id="overhead-percent">15</span>%)</td>
-          <td id="overhead-result">£0.00</td>
-        </tr>
-        <tr>
-          <td>Profit (<span id="profit-percent">10</span>%)</td>
-          <td id="profit-result">£0.00</td>
-        </tr>
-        <tr>
-          <td><strong>Total</strong></td>
-          <td id="final-total-result"><strong>£0.00</strong></td>
-        </tr>
-        <tr>
-          <td>Rate per <span id="unit-display">m²</span></td>
-          <td id="rate-result">£0.00</td>
-        </tr>
-      </table>
-    </div>
-    
-    <div id="total-results" style="display: none;">
-      <table class="results-table">
-        <tr>
-          <td>Base Cost</td>
-          <td id="total-cost-result">£0.00</td>
-        </tr>
-        <tr>
-          <td>Rate per <span id="unit-display-2">m²</span></td>
-          <td id="rate-result-2">£0.00</td>
-        </tr>
-      </table>
-    </div>
-  </div>
-  
-  <div class="saved-items-section">
-    <h2>Saved Calculations</h2>
-    
-    <div id="selection-actions" class="selection-actions">
-      <span><span id="selected-count">0</span> items selected</span>
-      <button id="combine-selected" class="btn btn-primary">Combine Selected</button>
-      <button id="clear-selection" class="btn btn-default">Clear Selection</button>
-    </div>
-    
-    <div id="saved-items-list">
-      <div class="no-items">No saved calculations yet</div>
-    </div>
-  </div>
-  
-  <!-- Save Project Modal -->
-  <div id="save-project-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Save Project As</h3>
-      </div>
-      <div class="input-group">
-        <label for="new-project-name">Project Name</label>
-        <input type="text" id="new-project-name" placeholder="Enter project name">
-      </div>
-      <div class="modal-footer">
-        <button id="cancel-save-project" class="btn btn-default">Cancel</button>
-        <button id="confirm-save-project" class="btn btn-primary">Save</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Load Project Modal -->
-  <div id="load-project-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Load Project</h3>
-      </div>
-      <div id="projects-list">
-        <!-- Projects will be populated here -->
-      </div>
-      <div class="modal-footer">
-        <button id="close-load-project" class="btn btn-default">Close</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Combine Items Modal -->
-  <div id="combine-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Combine Calculations</h3>
-      </div>
-      <div class="input-group">
-        <label for="combine-description">Description</label>
-        <input type="text" id="combine-description" placeholder="Enter description for combined item">
-      </div>
-      <div class="input-group">
-        <label for="combine-unit">Unit Type</label>
-        <select id="combine-unit">
-          <option value="m2">Square Meter (m²)</option>
-          <option value="m">Linear Meter (m)</option>
-          <option value="item">Item</option>
-          <option value="nr">Number (Nr)</option>
-        </select>
-      </div>
-      <p>Combining <span id="combining-count">0</span> items:</p>
-      <div id="combining-items-list">
-        <!-- Selected items will be shown here -->
-      </div>
-      <div class="modal-footer">
-        <button id="cancel-combine" class="btn btn-default">Cancel</button>
-        <button id="confirm-combine" class="btn btn-primary">Combine</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Add to Combined Modal -->
-  <div id="add-to-combined-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Add to Combined Item</h3>
-      </div>
-      <p>Adding items to: <span id="target-combined-name"></span></p>
-      <div id="selectable-items-list">
-        <!-- Selectable items will be shown here -->
-      </div>
-      <div class="modal-footer">
-        <button id="cancel-add-combined" class="btn btn-default">Cancel</button>
-        <button id="confirm-add-combined" class="btn btn-primary">Add Selected</button>
-      </div>
-    </div>
-  </div>
 
-  <script>
-    // State management
-    let state = {
-      currentProjectName: 'Untitled Project',
-      savedProjects: [],
-      description: '',
-      inputMode: 'detailed',
-      materials: 0,
-      labor: 0,
-      totalCost: 0,
-      overhead: 15,
-      profit: 10,
-      unit: 'm2',
-      savedItems: [],
-      selectedItems: [],
-      expandedItems: [],
-      selectedCombinedItem: null,
-      results: {
-        subtotal: 0,
-        overheadAmount: 0,
-        profitAmount: 0,
-        total: 0,
-        ratePerUnit: 0
-      }
-    };
+    <div class="app-container">
 
-    // DOM Elements
-    const elements = {};
+        <!-- Project Header -->
 
-    // Initialize when the document is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-      // Get all DOM elements we need to interact with
-      initializeElements();
-      // Set up event listeners
-      setupEventListeners();
-      // Load saved data from localStorage
-      loadStateFromStorage();
-      // Update the UI
-      updateUI();
-    });
+        <div class="header">
 
-    // Get references to all DOM elements we need
-    function initializeElements() {
-      // Project controls
-      elements.projectName = document.getElementById('project-name');
-      elements.exportPdf = document.getElementById('export-pdf');
-      elements.saveAsProject = document.getElementById('save-as-project');
-      elements.loadProject = document.getElementById('load-project');
-      // Input fields
-      elements.description = document.getElementById('description');
-      elements.detailedMode = document.getElementById('detailed-mode');
-      elements.totalMode = document.getElementById('total-mode');
-      elements.detailedInputs = document.getElementById('detailed-inputs');
-      elements.totalInputs = document.getElementById('total-inputs');
-      elements.materials = document.getElementById('materials');
-      elements.labor = document.getElementById('labor');
-      elements.totalCost = document.getElementById('total-cost');
-      elements.overhead = document.getElementById('overhead');
-      elements.profit = document.getElementById('profit');
-      elements.unitType = document.getElementById('unit-type');
-      elements.saveCalculation = document.getElementById('save-calculation');
-      elements.clearForm = document.getElementById('clear-form');
-      // Results elements
-      elements.detailedResults = document.getElementById('detailed-results');
-      elements.totalResults = document.getElementById('total-results');
-      elements.materialsResult = document.getElementById('materials-result');
-      elements.laborResult = document.getElementById('labor-result');
-      elements.subtotalResult = document.getElementById('subtotal-result');
-      elements.overheadPercent = document.getElementById('overhead-percent');
-      elements.overheadResult = document.getElementById('overhead-result');
-      elements.profitPercent = document.getElementById('profit-percent');
-      elements.profitResult = document.getElementById('profit-result');
-      elements.totalCost
+            <h1>Rate Calculator for Quantity Surveyors</h1>
+
+            <div id="project-info">
+
+                <span id="project-name">Untitled Project</span>
+
+                <div class="project-actions">
+
+                    <button id="save-project" class="btn btn-primary">Save Project</button>
+
+                    <button id="save-as-project" class="btn btn-success">Save As...</button>
+
+                    <button id="load-project" class="btn btn-default">Load Project</button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        
+
+        <div class="calculator-container">
+
+            <div class="inputs-section">
+
+                <h2>Inputs</h2>
+
+                
+
+                <div class="form-group">
+
+                    <label for="description">Description</label>
+
+                    <textarea id="description" placeholder="Enter item description..."></textarea>
+
+                </div>
+
+                
+
+                <div class="input-mode-selector">
+
+                    <button id="detailed-mode" class="mode-btn active">Detailed Input</button>
+
+                    <button id="total-mode" class="mode-btn">Total Cost Input</button>
+
+                </div>
+
+                
+
+                <div id="detailed-inputs">
+
+                    <div class="form-group">
+
+                        <label for="materials">Material Costs (£)</label>
+
+                        <div class="input-with-prefix">
+
+                            <span class="prefix">£</span>
+
+                            <input type="text" id="materials" placeholder="0.00">
+
+                        </div>
+
+                    </div>
+
+                    
+
+                    <div class="form-group">
+
+                        <label for="labor">Labour Costs (£)</label>
+
+                        <div class="input-with-prefix">
+
+                            <span class="prefix">£</span>
+
+                            <input type="text" id="labor" placeholder="0.00">
+
+                        </div>
+
+                    </div>
+
+                    
+
+                    <div class="form-group">
+
+                        <label for="overhead">Overhead (%)</label>
+
+                        <div class="input-with-suffix">
+
+                            <input type="text" id="overhead" value="15">
+
+                            <span class="suffix">%</span>
+
+                        </div>
+
+                    </div>
+
+                    
+
+                    <div class="form-group">
+
+                        <label for="profit">Profit (%)</label>
+
+                        <div class="input-with-suffix">
+
+                            <input type="text" id="profit" value="10">
+
+                            <span class="suffix">%</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                
+
+                <div id="total-inputs" style="display: none;">
+
+                    <div class="form-group">
+
+                        <label for="total-cost">Total Cost (Including O&P) (£)</label>
+
+                        <div class="input-with-prefix">
+
+                            <span class="prefix">£</span>
+
+                            <input type="text" id="total-cost" placeholder="0.00">
+
+                        </div>
+
+                        <p class="hint">Enter the full rate including overhead and profit</p>
+
+                    </div>
+
+                </div>
+
+                
+
+                <div class="form-group">
+
+                    <label for="unit-type">Unit Type</label>
+
+                    <select id="unit-type">
+
+                        <option value="m2">Square Meter (m²)</option>
+
+                        <option value="m">Meter (m)</option>
+
+                        <option value="item">Item</option>
+
+                        <option value="nr">Number (Nr)</option>
+
+                    </select>
+
+                </div>
+
+                
+
+                <div class="button-group">
+
+                    <button id="save-calculation" class="btn btn-success">Save Calculation</button>
+
+                    <button id="clear-form" class="btn btn-default">Clear Form</button>
+
+                </div>
+
+            </div>
+
+            
+
+            <div class="results-section">
+
+                <h2>Results</h2>
+
+                
+
+                <div id="detailed-results">
+
+                    <div class="result-row">
+
+                        <span>Materials:</span>
+
+                        <span id="materials-result">£0.00</span>
+
+                    </div>
+
+                    
+
+                    <div class="result-row">
+
+                        <span>Labour:</span>
+
+                        <span id="labor-result">£0.00</span>
+
+                    </div>
+
+                    
+
+                    <div class="result-row">
+
+                        <span>Subtotal:</span>
+
+                        <span id="subtotal-result">£0.00</span>
+
+                    </div>
+
+                    
+
+                    <div class="result-row">
+
+                        <span>Overhead (<span id="overhead-percent">15</span>%):</span>
+
+                        <span id="overhead-result">£0.00</span>
+
+                    </div>
+
+                    
+
+                    <div class="result-row">
+
+                        <span>Profit (<span id="profit-percent">10</span>%):</span>
+
+                        <span id="profit-result">£0.00</span>
+
+                    </div>
+
+                </div>
+
+                
+
+                <div id="total-results" style="display: none;">
+
+                    <div class="result-row">
+
+                        <span>Total Cost (Including O&P):</span>
+
+                        <span id="total-cost-result">£0.00</span>
+
+                    </div>
+
+                </div>
+
+                
+
+                <div class="result-row total">
+
+                    <span>Total Cost:</span>
+
+                    <span id="final-total-result">£0.00</span>
+
+                </div>
+
+                
+
+                <div class="rate-box">
+
+                    <h3>Rate per <span id="unit-display">m²</span></h3>
+
+                    <div id="rate-result">£0.00</div>
+
+                    <p>Per 1 <span id="unit-display-2">m²</span></p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="saved-items-container">
+
+            <div class="saved-header">
+
+                <h2>Saved Calculations</h2>
+
+                <div id="selection-actions" style="display: none;">
+
+                    <button id="combine-selected" class="btn btn-success">Combine Selected (<span id="selected-count">0</span>)</button>
+
+                    <button id="clear-selection" class="btn btn-default">Clear Selection</button>
+
+                </div>
+
+            </div>
+
+            
+
+            <div id="saved-items-list">
+
+                <!-- Saved items will be inserted here by JavaScript -->
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Modals -->
+
+    <div id="save-project-modal" class="modal">
+
+        <div class="modal-content">
+
+            <h3>Save Project As</h3>
+
+            <div class="form-group">
+
+                <label for="new-project-name">Project Name</label>
+
+                <input type="text" id="new-project-name" placeholder="Enter project name...">
+
+            </div>
+
+            <div class="modal-actions">
+
+                <button id="cancel-save-project" class="btn btn-default">Cancel</button>
+
+                <button id="confirm-save-project" class="btn btn-success">Save</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="load-project-modal" class="modal">
+
+        <div class="modal-content">
+
+            <h3>Load Project</h3>
+
+            <div id="projects-list">
+
+                <!-- Projects will be inserted here by JavaScript -->
+
+            </div>
+
+            <div class="modal-actions">
+
+                <button id="close-load-project" class="btn btn-default">Close</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="combine-modal" class="modal">
+
+        <div class="modal-content">
+
+            <h3>Combine Calculations</h3>
+
+            <div class="form-group">
+
+                <label for="combine-description">Description for Combined Item</label>
+
+                <textarea id="combine-description" placeholder="Enter description for the combined calculation..."></textarea>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="combine-unit">Unit Type for Combined Item</label>
+
+                <select id="combine-unit">
+
+                    <option value="m2">Square Meter (m²)</option>
+
+                    <option value="m">Meter (m)</option>
+
+                    <option value="item">Item</option>
+
+                    <option value="nr">Number (Nr)</option>
+
+                </select>
+
+            </div>
+
+            <div class="combining-items">
+
+                <h4>Combining <span id="combining-count">0</span> items:</h4>
+
+                <ul id="combining-items-list">
+
+                    <!-- Items being combined will be listed here -->
+
+                </ul>
+
+            </div>
+
+            <div class="modal-actions">
+
+                <button id="cancel-combine" class="btn btn-default">Cancel</button>
+
+                <button id="confirm-combine" class="btn btn-success">Combine</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="add-to-combined-modal" class="modal">
+
+        <div class="modal-content">
+
+            <h3>Add to Combined Calculation</h3>
+
+            <div class="combined-target">
+
+                <p>Adding to: <span id="target-combined-name"></span></p>
+
+            </div>
+
+            <div class="selectable-items">
+
+                <h4>Select items to add:</h4>
+
+                <div id="selectable-items-list">
+
+                    <!-- Selectable items will be listed here -->
+
+                </div>
+
+            </div>
+
+            <div class="modal-actions">
+
+                <button id="cancel-add-combined" class="btn btn-default">Cancel</button>
+
+                <button id="confirm-add-combined" class="btn btn-success">Add Selected</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        // State management
+
+        let state = {
+
+            currentProjectName: 'Untitled Project',
+
+            savedProjects: [],
+
+            description: '',
+
+            inputMode: 'detailed',
+
+            materials: 0,
+
+            labor: 0,
+
+            totalCost: 0,
+
+            overhead: 15,
+
+            profit: 10,
+
+            unit: 'm2',
+
+            savedItems: [],
+
+            selectedItems: [],
+
+            expandedItems: [],
+
+            selectedCombinedItem: null,
+
+            results: {
+
+                subtotal: 0,
+
+                overheadAmount: 0,
+
+                profitAmount: 0,
+
+                total: 0,
+
+                ratePerUnit: 0
+
+            }
+
+        };
+
+
+
+        // DOM Elements
+
+        const elements = {};
+
+
+
+        // Initialize when the document is loaded
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Get all DOM elements we need to interact with
+
+            initializeElements();
+
+            
+
+            // Set up event listeners
+
+            setupEventListeners();
+
+            
+
+            // Load saved data from localStorage
+
+            loadStateFromStorage();
+
+            
+
+            // Update the UI
+
+            updateUI();
+
+        });
+
+
+
+        // Get references to all DOM elements we need
+
+        function initializeElements() {
+
+            // Project controls
+
+            elements.projectName = document.getElementById('project-name');
+
+            elements.saveProject = document.getElementById('save-project');
+
+            elements.saveAsProject = document.getElementById('save-as-project');
+
+            elements.loadProject = document.getElementById('load-project');
+
+            
+
+            // Input fields
+
+            elements.description = document.getElementById('description');
+
+            elements.detailedMode = document.getElementById('detailed-mode');
+
+            elements.totalMode = document.getElementById('total-mode');
+
+            elements.detailedInputs = document.getElementById('detailed-inputs');
+
+            elements.totalInputs = document.getElementById('total-inputs');
+
+            elements.materials = document.getElementById('materials');
+
+            elements.labor = document.getElementById('labor');
+
+            elements.totalCost = document.getElementById('total-cost');
+
+            elements.overhead = document.getElementById('overhead');
+
+            elements.profit = document.getElementById('profit');
+
+            elements.unitType = document.getElementById('unit-type');
+
+            elements.saveCalculation = document.getElementById('save-calculation');
+
+            elements.clearForm = document.getElementById('clear-form');
+
+            
+
+            // Results elements
+
+            elements.detailedResults = document.getElementById('detailed-results');
+
+            elements.totalResults = document.getElementById('total-results');
+
+            elements.materialsResult = document.getElementById('materials-result');
+
+            elements.laborResult = document.getElementById('labor-result');
+
+            elements.subtotalResult = document.getElementById('subtotal-result');
+
+            elements.overheadPercent = document.getElementById('overhead-percent');
+
+            elements.overheadResult = document.getElementById('overhead-result');
+
+            elements.profitPercent = document.getElementById('profit-percent');
+
+            elements.profitResult = document.getElementById('profit-result');
+
+            elements.totalCostResult = document.getElementById('total-cost-result');
+
+            elements.finalTotalResult = document.getElementById('final-total-result');
+
+            elements.rateResult = document.getElementById('rate-result');
+
+            elements.unitDisplay = document.getElementById('unit-display');
+
+            elements.unitDisplay2 = document.getElementById('unit-display-2');
+
+            
+
+            // Saved items elements
+
+            elements.savedItemsList = document.getElementById('saved-items-list');
+
+            elements.selectionActions = document.getElementById('selection-actions');
+
+            elements.combineSelected = document.getElementById('combine-selected');
+
+            elements.clearSelection = document.getElementById('clear-selection');
+
+            elements.selectedCount = document.getElementById('selected-count');
+
+            
+
+            // Modal elements
+
+            elements.saveProjectModal = document.getElementById('save-project-modal');
+
+            elements.newProjectName = document.getElementById('new-project-name');
+
+            elements.cancelSaveProject = document.getElementById('cancel-save-project');
+
+            elements.confirmSaveProject = document.getElementById('confirm-save-project');
+
+            
+
+            elements.loadProjectModal = document.getElementById('load-project-modal');
+
+            elements.projectsList = document.getElementById('projects-list');
+
+            elements.closeLoadProject = document.getElementById('close-load-project');
+
+            
+
+            elements.combineModal = document.getElementById('combine-modal');
+
+            elements.combineDescription = document.getElementById('combine-description');
+
+            elements.combineUnit = document.getElementById('combine-unit');
+
+            elements.combiningCount = document.getElementById('combining-count');
+
+            elements.combiningItemsList = document.getElementById('combining-items-list');
+
+            elements.cancelCombine = document.getElementById('cancel-combine');
+
+            elements.confirmCombine = document.getElementById('confirm-combine');
+
+            
+
+            elements.addToCombinedModal = document.getElementById('add-to-combined-modal');
+
+            elements.targetCombinedName = document.getElementById('target-combined-name');
+
+            elements.selectableItemsList = document.getElementById('selectable-items-list');
+
+            elements.cancelAddCombined = document.getElementById('cancel-add-combined');
+
+            elements.confirmAddCombined = document.getElementById('confirm-add-combined');
+
+        }
+
+
+
+        // Set up all event listeners
+
+        function setupEventListeners() {
+
+            // Input mode switching
+
+            elements.detailedMode.addEventListener('click', () => switchInputMode('detailed'));
+
+            elements.totalMode.addEventListener('click', () => switchInputMode('total'));
+
+            
+
+            // Numeric input validation
+
+            elements.materials.addEventListener('input', () => handleNumericInput(elements.materials, 'materials'));
+
+            elements.labor.addEventListener('input', () => handleNumericInput(elements.labor, 'labor'));
+
+            elements.totalCost.addEventListener('input', () => handleNumericInput(elements.totalCost, 'totalCost'));
+
+            elements.overhead.addEventListener('input', () => handleNumericInput(elements.overhead, 'overhead'));
+
+            elements.profit.addEventListener('input', () => handleNumericInput(elements.profit, 'profit'));
+
+            
+
+            // Text inputs
+
+            elements.description.addEventListener('input', (e) => { state.description = e.target.value; });
+
+            
+
+            // Selects
+
+            elements.unitType.addEventListener('change', (e) => {
+
+                state.unit = e.target.value;
+
+                updateResults();
+
+            });
+
+            
+
+            // Buttons
+
+            elements.saveProject.addEventListener('click', saveCurrentProject);
+
+            elements.saveAsProject.addEventListener('click', () => showModal(elements.saveProjectModal));
+
+            elements.loadProject.addEventListener('click', () => {
+
+                populateProjectsList();
+
+                showModal(elements.loadProjectModal);
+
+            });
+
+            elements.saveCalculation.addEventListener('click', saveCalculation);
+
+            elements.clearForm.addEventListener('click', clearForm);
+
+            elements.combineSelected.addEventListener('click', openCombineModal);
+
+            elements.clearSelection.addEventListener('click', clearSelection);
+
+            
+
+            // Modal actions
+
+            elements.cancelSaveProject.addEventListener('click', () => hideModal(elements.saveProjectModal));
+
+            elements.confirmSaveProject.addEventListener('click', saveProjectAs);
+
+            elements.closeLoadProject.addEventListener('click', () => hideModal(elements.loadProjectModal));
+
+            elements.cancelCombine.addEventListener('click', () => hideModal(elements.combineModal));
+
+            elements.confirmCombine.addEventListener('click', combineCalculations);
+
+            elements.cancelAddCombined.addEventListener('click', () => hideModal(elements.addToCombinedModal));
+
+            elements.confirmAddCombined.addEventListener('click', addToCombinedCalculation);
+
+        }
+
+
+
+        // Handle numeric input with validation
+
+        function handleNumericInput(element, stateKey) {
+
+            const numValue = element.value.replace(/[^0-9.]/g, '');
+
+            element.value = numValue;
+
+            state[stateKey] = parseFloat(numValue) || 0;
+
+            updateResults();
+
+        }
+
+
+
+        // Switch between detailed and total input modes
+
+        function switchInputMode(mode) {
+
+            state.inputMode = mode;
+
+            
+
+            if (mode === 'detailed') {
+
+                elements.detailedMode.classList.add('active');
+
+                elements.totalMode.classList.remove('active');
+
+                elements.detailedInputs.style.display = 'block';
+
+                elements.totalInputs.style.display = 'none';
+
+                elements.detailedResults.style.display = 'block';
+
+                elements.totalResults.style.display = 'none';
+
+            } else {
+
+                elements.detailedMode.classList.remove('active');
+
+                elements.totalMode.classList.add('active');
+
+                elements.detailedInputs.style.display = 'none';
+
+                elements.totalInputs.style.display = 'block';
+
+                elements.detailedResults.style.display = 'none';
+
+                elements.totalResults.style.display = 'block';
+
+            }
+
+            
+
+            updateResults();
+
+        }
+
+
+
+        // Update calculation results
+
+        function updateResults() {
+
+            let subtotal, overheadAmount, profitAmount, total;
+
+            
+
+            if (state.inputMode === 'detailed') {
+
+                subtotal = state.materials + state.labor;
+
+                overheadAmount = subtotal * (state.overhead / 100);
+
+                profitAmount = (subtotal + overheadAmount) * (state.profit / 100);
+
+                total = subtotal + overheadAmount + profitAmount;
+
+            } else {
+
+                subtotal = 0;
+
+                overheadAmount = 0;
+
+                profitAmount = 0;
+
+                total = state.totalCost;
+
+            }
+
+            
+
+            state.results = {
+
+                subtotal,
+
+                overheadAmount,
+
+                profitAmount,
+
+                total,
+
+                ratePerUnit: total
+
+            };
+
+            
+
+            // Update display
+
+            elements.materialsResult.textContent = formatCurrency(state.materials);
+
+            elements.laborResult.textContent = formatCurrency(state.labor);
+
+            elements.subtotalResult.textContent = formatCurrency(subtotal);
+
+            elements.overheadPercent.textContent = state.overhead;
+
+            elements.overheadResult.textContent = formatCurrency(overheadAmount);
+
+            elements.profitPercent.textContent = state.profit;
+
+            elements.profitResult.textContent = formatCurrency(profitAmount);
+
+            elements.totalCostResult.textContent = formatCurrency(state.totalCost);
+
+            elements.finalTotalResult.textContent = formatCurrency(total);
+
+            elements.rateResult.textContent = formatCurrency(state.results.ratePerUnit);
+
+            
+
+            // Update unit display
+
+            const unitDisplayText = getUnitDisplayText(state.unit);
+
+            elements.unitDisplay.textContent = unitDisplayText;
+
+            elements.unitDisplay2.textContent = unitDisplayText;
+
+        }
+
+
+
+        // Format currency
+
+        function formatCurrency(value) {
+
+            return new Intl.NumberFormat('en-GB', { 
+
+                style: 'currency', 
+
+                currency: 'GBP',
+
+                minimumFractionDigits: 2,
+
+                maximumFractionDigits: 2 
+
+            }).format(value);
+
+        }
+
+
+
+        // Get display text for unit
+
+        function getUnitDisplayText(unit) {
+
+            switch(unit) {
+
+                case 'm2': return 'm²';
+
+                case 'm': return 'm';
+
+                case 'item': return 'item';
+
+                case 'nr': return 'Nr';
+
+                default: return unit;
+
+            }
+
+        }
+
+
+
+        // Save current calculation
+
+        function saveCalculation() {
+
+            if (!state.description.trim()) {
+
+                alert('Please enter a description before saving');
+
+                return;
+
+            }
+
+
+
+            const itemToSave = {
+
+                id: Date.now(),
+
+                description: state.description,
+
+                inputMode: state.inputMode,
+
+                materials: state.inputMode === 'detailed' ? state.materials : 0,
+
+                labor: state.inputMode === 'detailed' ? state.labor : 0,
+
+                totalCost: state.inputMode === 'total' ? state.totalCost : 0,
+
+                overhead: state.overhead,
+
+                profit: state.profit,
+
+                unit: state.unit,
+
+                results: state.results,
+
+                isCombined: false,
+
+                childItems: []
+
+            };
+
+
+
+            state.savedItems.push(itemToSave);
+
+            saveCurrentProject();
+
+            renderSavedItems();
+
+            
+
+            alert('Item saved successfully');
+
+        }
+
+
+
+        // Clear the form
+
+        function clearForm() {
+
+            state.description = '';
+
+            state.materials = 0;
+
+            state.labor = 0;
+
+            state.totalCost = 0;
+
+            
+
+            elements.description.value = '';
+
+            elements.materials.value = '0';
+
+            elements.labor.value = '0';
+
+            elements.totalCost.value = '0';
+
+            
+
+            updateResults();
+
+        }
+
+
+
+        // Save the current project
+
+        function saveCurrentProject() {
+
+            const projectData = {
+
+                name: state.currentProjectName,
+
+                items: state.savedItems,
+
+                lastUpdated: new Date().toISOString()
+
+            };
+
+            
+
+            // Update the project in the projects list
+
+            const existingProjectIndex = state.savedProjects.findIndex(p => p.name === state.currentProjectName);
+
+            
+
+            if (existingProjectIndex >= 0) {
+
+                state.savedProjects[existingProjectIndex] = projectData;
+
+            } else {
+
+                state.savedProjects.push(projectData);
+
+            }
+
+            
+
+            // Save to localStorage
+
+            saveStateToStorage();
+
+        }
+
+
+
+        // Save project with a new name
+
+        function saveProjectAs() {
+
+            const newName = elements.newProjectName.value.trim();
+
+            
+
+            if (!newName) {
+
+                alert('Please enter a project name');
+
+                return;
+
+            }
+
+            
+
+            // Check if project name already exists
+
+            const existingProject = state.savedProjects.find(p => p.name === newName);
+
+            if (existingProject && !confirm(`A project named "${newName}" already exists. Do you want to overwrite it?`)) {
+
+                return;
+
+            }
+
+            
+
+            state.currentProjectName = newName;
+
+            elements.projectName.textContent = newName;
+
+            
+
+            saveCurrentProject();
+
+            hideModal(elements.saveProjectModal);
+
+            elements.newProjectName.value = '';
+
+            
+
+            alert('Project saved successfully');
+
+        }
+
+
+
+        // Populate the projects list in the load project modal
+
+        function populateProjectsList() {
+
+            elements.projectsList.innerHTML = '';
+
+            
+
+            if (state.savedProjects.length === 0) {
+
+                elements.projectsList.innerHTML = '<div class="no-projects">No saved projects found</div>';
+
+                return;
+
+            }
+
+            
+
+            state.savedProjects.forEach(project => {
+
+                const projectElement = document.createElement('div');
+
+                projectElement.className = 'projects-list-item';
+
+                
+
+                projectElement.innerHTML = `
+
+                    <div class="project-list-info">
+
+                        <h4>${project.name}</h4>
+
+                        <div class="project-list-meta">
+
+                            ${project.items?.length || 0} items | Updated: ${formatDate(project.lastUpdated)}
+
+                        </div>
+
+                    </div>
+
+                    <div class="project-list-actions">
+
+                        <button class="btn btn-primary load-project-btn">Load</button>
+
+                        <button class="btn btn-default delete-project-btn">Delete</button>
+
+                    </div>
+
+                `;
+
+                
+
+                // Add event listeners
+
+                projectElement.querySelector('.load-project-btn').addEventListener('click', () => {
+
+                    loadProject(project);
+
+                    hideModal(elements.loadProjectModal);
+
+                });
+
+                
+
+                projectElement.querySelector('.delete-project-btn').addEventListener('click', () => {
+
+                    if (confirm(`Are you sure you want to delete the project "${project.name}"?`)) {
+
+                        deleteProject(project.name);
+
+                        populateProjectsList();
+
+                    }
+
+                });
+
+                
+
+                elements.projectsList.appendChild(projectElement);
+
+            });
+
+        }
+
+
+
+        // Load a project
+
+        function loadProject(project) {
+
+            // Ensure all items have required properties for backward compatibility
+
+            const itemsWithRequiredProps = (project.items || []).map(item => ({
+
+                ...item,
+
+                isCombined: item.isCombined || false,
+
+                childItems: item.childItems || []
+
+            }));
+
+            
+
+            state.savedItems = itemsWithRequiredProps;
+
+            state.currentProjectName = project.name;
+
+            state.selectedItems = [];
+
+            state.expandedItems = [];
+
+            
+
+            elements.projectName.textContent = project.name;
+
+            
+
+            renderSavedItems();
+
+            saveStateToStorage();
+
+        }
+
+
+
+        // Delete a project
+
+        function deleteProject(projectName) {
+
+            state.savedProjects = state.savedProjects.filter(p => p.name !== projectName);
+
+            
+
+            // If current project is deleted, reset to default
+
+            if (state.currentProjectName === projectName) {
+
+                state.currentProjectName = 'Untitled Project';
+
+                state.savedItems = [];
+
+                elements.projectName.textContent = 'Untitled Project';
+
+                renderSavedItems();
+
+            }
+
+            
+
+            saveStateToStorage();
+
+        }
+
+
+
+        // Render saved items
+
+        function renderSavedItems() {
+
+            elements.savedItemsList.innerHTML = '';
+
+            
+
+            // Filter out items that are components of combined items
+
+            const topLevelItems = state.savedItems.filter(item => {
+
+                const isComponentOfCombined = state.savedItems.some(
+
+                    combinedItem => 
+
+                        combinedItem.isCombined && 
+
+                        combinedItem.childItems && 
+
+                        combinedItem.childItems.includes(item.id)
+
+                );
+
+                
+
+                return !isComponentOfCombined;
+
+            });
+
+            
+
+            if (topLevelItems.length === 0) {
+
+                elements.savedItemsList.innerHTML = '<div class="no-items">No saved calculations yet</div>';
+
+                return;
+
+            }
+
+            
+
+            topLevelItems.forEach(item => {
+
+                const itemElement = renderSavedItem(item);
+
+                elements.savedItemsList.appendChild(itemElement);
+
+            });
+
+            
+
+            // Show/hide selection actions
+
+            if (state.selectedItems.length > 0) {
+
+                elements.selectionActions.style.display = 'flex';
+
+                elements.selectedCount.textContent = state.selectedItems.length;
+
+            } else {
+
+                elements.selectionActions.style.display = 'none';
+
+            }
+
+        }
+
+
+
+        // Render a single saved item
+
+        function renderSavedItem(item) {
+
+            const itemElement = document.createElement('div');
+
+            itemElement.className = 'saved-item';
+
+            itemElement.dataset.id = item.id;
+
+            
+
+            const isExpanded = state.expandedItems.includes(item.id);
+
+            const hasChildren = item.isCombined && item.childItems && item.childItems.length > 0;
+
+            
+
+            // Create the item header
+
+            const headerHTML = `
+
+                <div class="saved-item-header">
+
+                    <div class="saved-item-info">
+
+                        <input type="checkbox" class="saved-item-checkbox" ${state.selectedItems.includes(item.id) ? 'checked' : ''}>
+
+                        <div>
+
+                            <div class="saved-item-title">
+
+                                ${hasChildren ? `<span class="expander">${isExpanded ? '▼' : '►'}</span>` : ''}
+
+                                ${item.description}
+
+                                ${item.isCombined ? '<span class="combined-badge">Combined</span>' : ''}
+
+                            </div>
+
+                            <div class="saved-item-details">
+
+                                ${formatCurrency(item.results.total)} per ${getUnitDisplayText(item.unit)} | 
+
+                                ${item.inputMode === 'detailed' ? 
+
+                                    `Materials: ${formatCurrency(item.materials)}, Labour: ${formatCurrency(item.labor)}` : 
+
+                                    `Base Cost: ${formatCurrency(item.totalCost)}`
+
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="saved-item-actions">
+
+                        ${item.isCombined ? `<button class="btn btn-success add-to-combined-btn">Add Items</button>` : ''}
+
+                        <button class="btn btn-primary edit-btn">Edit</button>
+
+                        <button class="btn btn-default delete-btn">Delete</button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            
+
+            itemElement.innerHTML = headerHTML;
+
+            
+
+            // Add checkbox event listener
+
+            itemElement.querySelector('.saved-item-checkbox').addEventListener('click', (e) => {
+
+                toggleItemSelection(item.id);
+
+                e.stopPropagation();
+
+            });
+
+            
+
+            // Add expander event listener if has children
+
+            if (hasChildren) {
+
+                itemElement.querySelector('.expander').addEventListener('click', (e) => {
+
+                    toggleItemExpansion(item.id);
+
+                    e.stopPropagation();
+
+                });
+
+            }
+
+            
+
+            // Add other button event listeners
+
+            if (item.isCombined) {
+
+                itemElement.querySelector('.add-to-combined-btn').addEventListener('click', () => {
+
+                    openAddToCombinedModal(item.id);
+
+                });
+
+            }
+
+            
+
+            itemElement.querySelector('.edit-btn').addEventListener('click', () => {
+
+                loadItemToForm(item);
+
+            });
+
+            
+
+            itemElement.querySelector('.delete-btn').addEventListener('click', () => {
+
+                if (confirm('Are you sure you want to delete this item?')) {
+
+                    deleteCalculation(item.id);
+
+                }
+
+            });
+
+            
+
+            // Add child items if expanded
+
+            if (isExpanded && hasChildren) {
+
+                const childItems = state.savedItems.filter(childItem => item.childItems.includes(childItem.id));
+
+                
+
+                if (childItems.length > 0) {
+
+                    const childItemsContainer = document.createElement('div');
+
+                    childItemsContainer.className = 'child-items';
+
+                    
+
+                    childItems.forEach(childItem => {
+
+                        const childElement = document.createElement('div');
+
+                        childElement.className = 'child-item';
+
+                        
+
+                        childElement.innerHTML = `
+
+                            <div class="child-item-header">
+
+                                <div>
+
+                                    <div class="child-item-title">${childItem.description}</div>
+
+                                    <div class="child-item-details">
+
+                                        ${formatCurrency(childItem.results.total)} per ${getUnitDisplayText(childItem.unit)} | 
+
+                                        ${childItem.inputMode === 'detailed' ? 
+
+                                            `Materials: ${formatCurrency(childItem.materials)}, Labour: ${formatCurrency(childItem.labor)}` : 
+
+                                            `Base Cost: ${formatCurrency(childItem.totalCost)}`
+
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                                <div class="child-item-actions">
+
+                                    <button class="btn btn-primary edit-child-btn">Edit</button>
+
+                                    <button class="btn btn-default delete-child-btn">Delete</button>
+
+                                </div>
+
+                            </div>
+
+                        `;
+
+                        
+
+                        childElement.querySelector('.edit-child-btn').addEventListener('click', () => {
+
+                            loadItemToForm(childItem);
+
+                        });
+
+                        
+
+                        childElement.querySelector('.delete-child-btn').addEventListener('click', () => {
+
+                            if (confirm('Are you sure you want to delete this component item?')) {
+
+                                deleteCalculation(childItem.id);
+
+                            }
+
+                        });
+
+                        
+
+                        childItemsContainer.appendChild(childElement);
+
+                    });
+
+                    
+
+                    itemElement.appendChild(childItemsContainer);
+
+                }
+
+            }
+
+            
+
+            return itemElement;
+
+        }
+
+
+
+        // Toggle item selection
+
+        function toggleItemSelection(id) {
+
+            if (state.selectedItems.includes(id)) {
+
+                state.selectedItems = state.selectedItems.filter(itemId => itemId !== id);
+
+            } else {
+
+                state.selectedItems.push(id);
+
+            }
+
+            
+
+            renderSavedItems();
+
+        }
+
+
+
+        // Toggle item expansion
+
+        function toggleItemExpansion(id) {
+
+            if (state.expandedItems.includes(id)) {
+
+                state.expandedItems = state.expandedItems.filter(itemId => itemId !== id);
+
+            } else {
+
+                state.expandedItems.push(id);
+
+            }
+
+            
+
+            renderSavedItems();
+
+        }
+
+
+
+        // Clear selection
+
+        function clearSelection() {
+
+            state.selectedItems = [];
+
+            renderSavedItems();
+
+        }
+
+
+
+        // Load item to form
+
+        function loadItemToForm(item) {
+
+            state.description = item.description;
+
+            state.inputMode = item.inputMode || 'detailed';
+
+            state.materials = item.materials || 0;
+
+            state.labor = item.labor || 0;
+
+            state.totalCost = item.totalCost || 0;
+
+            state.overhead = item.overhead;
+
+            state.profit = item.profit;
+
+            state.unit = item.unit;
+
+            
+
+            elements.description.value = state.description;
+
+            elements.materials.value = state.materials;
+
+            elements.labor.value = state.labor;
+
+            elements.totalCost.value = state.totalCost;
+
+            elements.overhead.value = state.overhead;
+
+            elements.profit.value = state.profit;
+
+            elements.unitType.value = state.unit;
+
+            
+
+            switchInputMode(state.inputMode);
+
+        }
+
+
+
+        // Delete a calculation
+
+        function deleteCalculation(id) {
+
+            // First check if this item is a child of any combined item
+
+            state.savedItems.forEach(item => {
+
+                if (item.isCombined && item.childItems && item.childItems.includes(id)) {
+
+                    // Remove the reference to this item from the combined item's childItems
+
+                    item.childItems = item.childItems.filter(childId => childId !== id);
+
+                }
+
+            });
+
+            
+
+            // Now remove the item itself
+
+            state.savedItems = state.savedItems.filter(item => item.id !== id);
+
+            state.selectedItems = state.selectedItems.filter(selectedId => selectedId !== id);
+
+            state.expandedItems = state.expandedItems.filter(expandedId => expandedId !== id);
+
+            
+
+            renderSavedItems();
+
+            saveStateToStorage();
+
+        }
+
+
+
+        // Open combine modal
+
+        function openCombineModal() {
+
+            if (state.selectedItems.length < 2) {
+
+                alert('Please select at least 2 items to combine');
+
+                return;
+
+            }
+
+            
+
+            // Populate the modal
+
+            elements.combiningCount.textContent = state.selectedItems.length;
+
+            elements.combiningItemsList.innerHTML = '';
+
+            
+
+            const selectedItemsData = state.savedItems.filter(item => state.selectedItems.includes(item.id));
+
+            
+
+            selectedItemsData.forEach(item => {
+
+                const listItem = document.createElement('li');
+
+                listItem.textContent = item.description || 'Unnamed Item';
+
+                elements.combiningItemsList.appendChild(listItem);
+
+            });
+
+            
+
+            // Use the first selected item's unit as default
+
+            if (selectedItemsData.length > 0) {
+
+                elements.combineUnit.value = selectedItemsData[0].unit;
+
+            }
+
+            
+
+            showModal(elements.combineModal);
+
+        }
+
+
+
+        // Combine calculations
+
+        function combineCalculations() {
+
+            const combineDescription = elements.combineDescription.value.trim();
+
+            
+
+            if (!combineDescription) {
+
+                alert('Please enter a description for the combined calculation');
+
+                return;
+
+            }
+
+            
+
+            // Get the selected items
+
+            const itemsToCombine = state.savedItems.filter(item => state.selectedItems.includes(item.id));
+
+            
+
+            // Sum up costs
+
+            let totalMaterials = 0;
+
+            let totalLabor = 0;
+
+            let totalDirectCosts = 0;
+
+            
+
+            itemsToCombine.forEach(item => {
+
+                if (item.inputMode === 'detailed') {
+
+                    totalMaterials += item.materials;
+
+                    totalLabor += item.labor;
+
+                } else {
+
+                    totalDirectCosts += item.totalCost;
+
+                }
+
+            });
+
+            
+
+            // Calculate results
+
+            let subtotal, overheadAmount, profitAmount, total;
+
+            const combineUnit = elements.combineUnit.value;
+
+            let newInputMode;
+
+            
+
+            if (totalDirectCosts > 0 && totalMaterials === 0 && totalLabor === 0) {
+
+                // If only total cost items, keep as total cost
+
+                subtotal = 0;
+
+                overheadAmount = 0;
+
+                profitAmount = 0;
+
+                total = totalDirectCosts;
+
+                newInputMode = 'total';
+
+            } else if (totalDirectCosts > 0) {
+
+                // Mixed items - convert everything to detailed
+
+                subtotal = totalMaterials + totalLabor + totalDirectCosts;
+
+                overheadAmount = 0;
+
+                profitAmount = 0;
+
+                total = subtotal;
+
+                newInputMode = 'detailed';
+
+            } else {
+
+                // Only detailed items - apply O&P
+
+                subtotal = totalMaterials + totalLabor;
+
+                overheadAmount = subtotal * (state.overhead / 100);
+
+                profitAmount = (subtotal + overheadAmount) * (state.profit / 100);
+
+                total = subtotal + overheadAmount + profitAmount;
+
+                newInputMode = 'detailed';
+
+            }
+
+            
+
+            const combinedItem = {
+
+                id: Date.now(),
+
+                description: combineDescription,
+
+                inputMode: newInputMode,
+
+                materials: newInputMode === 'detailed' ? totalMaterials : 0,
+
+                labor: newInputMode === 'detailed' ? totalLabor : 0,
+
+                totalCost: newInputMode === 'total' ? total : 0,
+
+                overhead: state.overhead,
+
+                profit: state.profit,
+
+                unit: combineUnit,
+
+                results: {
+
+                    subtotal,
+
+                    overheadAmount,
+
+                    profitAmount,
+
+                    total,
+
+                    ratePerUnit: total
+
+                },
+
+                isCombined: true,
+
+                childItems: state.selectedItems
+
+            };
+
+            
+
+            // Add to saved items
+
+            state.savedItems.push(combinedItem);
+
+            
+
+            // Reset and close
+
+            state.selectedItems = [];
+
+            elements.combineDescription.value = '';
+
+            hideModal(elements.combineModal);
+
+            
+
+            renderSavedItems();
+
+            saveStateToStorage();
+
+        }
+
+
+
+        // Open add to combined modal
+
+        function openAddToCombinedModal(combinedItemId) {
+
+            const combinedItem = state.savedItems.find(item => item.id === combinedItemId);
+
+            
+
+            if (!combinedItem || !combinedItem.isCombined) {
+
+                alert('This item is not a combined calculation');
+
+                return;
+
+            }
+
+            
+
+            state.selectedCombinedItem = combinedItem;
+
+            state.selectedItems = [];
+
+            
+
+            // Populate the modal
+
+            elements.targetCombinedName.textContent = combinedItem.description;
+
+            elements.selectableItemsList.innerHTML = '';
+
+            
+
+            // Get items that are not already in the combined item
+
+            const selectableItems = state.savedItems.filter(item => 
+
+                item.id !== combinedItem.id && 
+
+                !combinedItem.childItems.includes(item.id)
+
+            );
+
+            
+
+            if (selectableItems.length === 0) {
+
+                elements.selectableItemsList.innerHTML = '<div class="no-items">No items available to add</div>';
+
+            } else {
+
+                selectableItems.forEach(item => {
+
+                    const itemElement = document.createElement('div');
+
+                    itemElement.className = 'selectable-item';
+
+                    
+
+                    itemElement.innerHTML = `
+
+                        <input type="checkbox" class="selectable-item-checkbox" data-id="${item.id}">
+
+                        <div class="selectable-item-info">
+
+                            <div class="selectable-item-title">${item.description}</div>
+
+                            <div class="selectable-item-price">${formatCurrency(item.results.total)} per ${getUnitDisplayText(item.unit)}</div>
+
+                        </div>
+
+                    `;
+
+                    
+
+                    itemElement.querySelector('.selectable-item-checkbox').addEventListener('change', (e) => {
+
+                        const itemId = parseInt(e.target.dataset.id);
+
+                        if (e.target.checked) {
+
+                            state.selectedItems.push(itemId);
+
+                        } else {
+
+                            state.selectedItems = state.selectedItems.filter(id => id !== itemId);
+
+                        }
+
+                    });
+
+                    
+
+                    elements.selectableItemsList.appendChild(itemElement);
+
+                });
+
+            }
+
+            
+
+            showModal(elements.addToCombinedModal);
+
+        }
+
+
+
+        // Add items to a combined calculation
+
+        function addToCombinedCalculation() {
+
+            if (!state.selectedCombinedItem) return;
+
+            
+
+            if (state.selectedItems.length === 0) {
+
+                alert('Please select at least one item to add to the combined calculation');
+
+                return;
+
+            }
+
+            
+
+            // Make sure we're not adding the combined item to itself
+
+            if (state.selectedItems.includes(state.selectedCombinedItem.id)) {
+
+                alert('Cannot add a combined item to itself');
+
+                return;
+
+            }
+
+            
+
+            // Filter out items that are already in the combined calculation
+
+            const newChildIds = state.selectedItems.filter(id => !state.selectedCombinedItem.childItems.includes(id));
+
+            
+
+            if (newChildIds.length === 0) {
+
+                alert('All selected items are already in this combined calculation');
+
+                return;
+
+            }
+
+            
+
+            // Get the items to add
+
+            const itemsToAdd = state.savedItems.filter(item => newChildIds.includes(item.id));
+
+            
+
+            // Recalculate the combined values
+
+            let newMaterials = state.selectedCombinedItem.materials || 0;
+
+            let newLabor = state.selectedCombinedItem.labor || 0;
+
+            let newTotalCost = state.selectedCombinedItem.totalCost || 0;
+
+            
+
+            itemsToAdd.forEach(item => {
+
+                if (item.inputMode === 'detailed') {
+
+                    newMaterials += item.materials;
+
+                    newLabor += item.labor;
+
+                } else {
+
+                    newTotalCost += item.totalCost;
+
+                }
+
+            });
+
+            
+
+            // Create updated combined item
+
+            let subtotal, overheadAmount, profitAmount, total;
+
+            const overhead = state.selectedCombinedItem.overhead;
+
+            const profit = state.selectedCombinedItem.profit;
+
+            
+
+            if (newTotalCost > 0 && newMaterials === 0 && newLabor === 0) {
+
+                // If only total cost items, keep as total cost
+
+                subtotal = 0;
+
+                overheadAmount = 0;
+
+                profitAmount = 0;
+
+                total = newTotalCost;
+
+            } else if (newTotalCost > 0) {
+
+                // Mixed items - convert everything to detailed
+
+                subtotal = newMaterials + newLabor + newTotalCost;
+
+                overheadAmount = 0;
+
+                profitAmount = 0;
+
+                total = subtotal;
+
+            } else {
+
+                // Only detailed items - apply O&P
+
+                subtotal = newMaterials + newLabor;
+
+                overheadAmount = subtotal * (overhead / 100);
+
+                profitAmount = (subtotal + overheadAmount) * (profit / 100);
+
+                total = subtotal + overheadAmount + profitAmount;
+
+            }
+
+            
+
+            // Update the combined item
+
+            const itemIndex = state.savedItems.findIndex(item => item.id === state.selectedCombinedItem.id);
+
+            
+
+            if (itemIndex >= 0) {
+
+                state.savedItems[itemIndex] = {
+
+                    ...state.selectedCombinedItem,
+
+                    materials: newMaterials,
+
+                    labor: newLabor,
+
+                    totalCost: newTotalCost,
+
+                    childItems: [...state.selectedCombinedItem.childItems, ...newChildIds],
+
+                    results: {
+
+                        subtotal,
+
+                        overheadAmount,
+
+                        profitAmount,
+
+                        total,
+
+                        ratePerUnit: total
+
+                    }
+
+                };
+
+            }
+
+            
+
+            // Reset and close
+
+            state.selectedItems = [];
+
+            state.selectedCombinedItem = null;
+
+            hideModal(elements.addToCombinedModal);
+
+            
+
+            renderSavedItems();
+
+            saveStateToStorage();
+
+            
+
+            alert('Items added to combined calculation successfully');
+
+        }
+
+
+
+        // Format date
+
+        function formatDate(dateString) {
+
+            const date = new Date(dateString);
+
+            
+
+            return date.toLocaleDateString('en-GB', {
+
+                day: '2-digit',
+
+                month: 'short',
+
+                year: 'numeric',
+
+                hour: '2-digit',
+
+                minute: '2-digit'
+
+            });
+
+        }
+
+
+
+        // Show a modal
+
+        function showModal(modal) {
+
+            modal.classList.add('show');
+
+        }
+
+
+
+        // Hide a modal
+
+        function hideModal(modal) {
+
+            modal.classList.remove('show');
+
+        }
+
+
+
+        // Check if localStorage is available
+
+        function isLocalStorageAvailable() {
+
+            try {
+
+                const test = 'test';
+
+                localStorage.setItem(test, test);
+
+                localStorage.removeItem(test);
+
+                return true;
+
+            } catch(e) {
+
+                return false;
+
+            }
+
+        }
+
+
+
+        // Memory storage fallback when localStorage isn't available
+
+        const memoryStorage = {
+
+            data: {},
+
+            getItem: function(key) {
+
+                return this.data[key] || null;
+
+            },
+
+            setItem: function(key, value) {
+
+                this.data[key] = value;
+
+            },
+
+            removeItem: function(key) {
+
+                delete this.data[key];
+
+            },
+
+            clear: function() {
+
+                this.data = {};
+
+            }
+
+        };
+
+
+
+        // Get storage (either localStorage or memory fallback)
+
+        function getStorage() {
+
+            return isLocalStorageAvailable() ? localStorage : memoryStorage;
+
+        }
+
+
+
+        // Save state to storage
+
+        function saveStateToStorage() {
+
+            try {
+
+                const storage = getStorage();
+
+                storage.setItem('currentProjectName', state.currentProjectName);
+
+                storage.setItem('savedProjects', JSON.stringify(state.savedProjects));
+
+                storage.setItem('savedItems', JSON.stringify(state.savedItems));
+
+            } catch (e) {
+
+                console.error('Error saving to storage:', e);
+
+            }
+
+        }
+
+
+
+        // Load state from storage
+
+        function loadStateFromStorage() {
+
+            try {
+
+                const storage = getStorage();
+
+                const currentProjectName = storage.getItem('currentProjectName');
+
+                const savedProjects = storage.getItem('savedProjects');
+
+                const savedItems = storage.getItem('savedItems');
+
+                
+
+                if (currentProjectName) {
+
+                    state.currentProjectName = currentProjectName;
+
+                    elements.projectName.textContent = state.currentProjectName;
+
+                }
+
+                
+
+                if (savedProjects) {
+
+                    state.savedProjects = JSON.parse(savedProjects);
+
+                }
+
+                
+
+                if (savedItems) {
+
+                    state.savedItems = JSON.parse(savedItems).map(item => ({
+
+                        ...item,
+
+                        isCombined: item.isCombined || false,
+
+                        childItems: item.childItems || []
+
+                    }));
+
+                    renderSavedItems();
+
+                }
+
+                
+
+                // Show notification if using in-memory storage
+
+                if (!isLocalStorageAvailable()) {
+
+                    const storageWarning = document.createElement('div');
+
+                    storageWarning.style.backgroundColor = '#fff3cd';
+
+                    storageWarning.style.color = '#856404';
+
+                    storageWarning.style.padding = '10px';
+
+                    storageWarning.style.marginBottom = '15px';
+
+                    storageWarning.style.borderRadius = '4px';
+
+                    storageWarning.style.border = '1px solid #ffeeba';
+
+                    storageWarning.innerHTML = '<strong>Note:</strong> This calculator is running in a restricted environment. Your calculations will not persist between page refreshes.';
+
+                    
+
+                    const appContainer = document.querySelector('.app-container');
+
+                    appContainer.insertBefore(storageWarning, appContainer.firstChild);
+
+                }
+
+            } catch (e) {
+
+                console.error('Error loading from storage:', e);
+
+            }
+
+        }
+
+
+
+        // Update the UI based on the current state
+
+        function updateUI() {
+
+            elements.projectName.textContent = state.currentProjectName;
+
+            switchInputMode(state.inputMode);
+
+            updateResults();
+
+            renderSavedItems();
+
+        }
+
+    </script>
+
+</body>
+
+</html>

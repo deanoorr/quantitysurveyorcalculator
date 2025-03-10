@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load saved data from localStorage
     loadStateFromStorage();
     
+    // Create notification container
+    createNotificationContainer();
+    
     // Update the UI
     updateUI();
 });
@@ -284,7 +287,7 @@ function saveCalculation() {
                 ...itemData
             };
             
-            alert('Item updated successfully');
+            showNotification('Item updated successfully');
         }
         
         // Reset editing state
@@ -306,7 +309,7 @@ function saveCalculation() {
         };
         
         state.savedItems.push(newItem);
-        alert('Item saved successfully');
+        showNotification('Item saved successfully');
     }
 
     saveCurrentProject();
@@ -398,7 +401,8 @@ function editCalculation(itemId) {
 
 // Delete a saved calculation
 function deleteCalculation(itemId) {
-    if (confirm('Are you sure you want to delete this item?')) {
+    const item = state.savedItems.find(item => item.id === itemId);
+    if (item && confirm(`Are you sure you want to delete "${item.description}"?`)) {
         // Check if the item is currently being edited
         if (state.currentlyEditing === itemId) {
             clearForm();
@@ -482,7 +486,7 @@ function toggleItemExpansion(itemId) {
 // Open the combine modal
 function openCombineModal() {
     if (state.selectedItems.length < 2) {
-        alert('Please select at least 2 items to combine');
+        showNotification('Please select at least 2 items to combine', 'error');
         return;
     }
     
@@ -510,7 +514,7 @@ function combineCalculations() {
     const unit = elements.combineUnit.value;
     
     if (!description) {
-        alert('Please enter a description for the combined item');
+        showNotification('Please enter a description for the combined item', 'error');
         return;
     }
     
@@ -627,7 +631,7 @@ function addToCombinedCalculation() {
         const checkboxes = elements.selectableItemsList.querySelectorAll('input[type="checkbox"]:checked');
         
         if (checkboxes.length === 0) {
-            alert('Please select at least one item to add');
+            showNotification('Please select at least one item to add', 'error');
             return;
         }
         
@@ -710,15 +714,11 @@ function renderSavedItems() {
             badge.textContent = 'Combined';
             title.appendChild(badge);
             
-            // Add expand/collapse button
-            const toggleBtn = document.createElement('button');
-            toggleBtn.className = 'btn btn-default';
-            toggleBtn.textContent = state.expandedItems.includes(item.id) ? 'Collapse' : 'Expand';
-            toggleBtn.style.marginLeft = '8px';
-            toggleBtn.style.padding = '2px 6px';
-            toggleBtn.style.fontSize = '12px';
-            toggleBtn.addEventListener('click', () => toggleItemExpansion(item.id));
-            title.appendChild(toggleBtn);
+            // Add item count info
+            const itemCountBadge = document.createElement('span');
+            itemCountBadge.className = 'item-count-badge';
+            itemCountBadge.textContent = `${item.childItems.length} items`;
+            title.appendChild(itemCountBadge);
         }
         
         info.appendChild(checkbox);
@@ -759,6 +759,13 @@ function renderSavedItems() {
             addBtn.textContent = 'Add Items';
             addBtn.addEventListener('click', () => openAddToCombinedModal(item.id));
             actions.appendChild(addBtn);
+            
+            // Add toggle dropdown button
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'btn btn-default dropdown-toggle';
+            toggleBtn.innerHTML = '<span class="dropdown-icon">&#9660;</span> Details';
+            toggleBtn.addEventListener('click', () => toggleItemExpansion(item.id));
+            actions.appendChild(toggleBtn);
         }
         
         header.appendChild(info);
@@ -766,38 +773,62 @@ function renderSavedItems() {
         
         itemElem.appendChild(header);
         
-        // Add child items if this is a combined item and it's expanded
-        if (item.isCombined && state.expandedItems.includes(item.id) && item.childItems.length > 0) {
-            const childItems = document.createElement('div');
-            childItems.className = 'child-items';
+        // Add child items as a dropdown if this is a combined item
+        if (item.isCombined && item.childItems.length > 0) {
+            const childrenContainer = document.createElement('div');
+            childrenContainer.className = 'children-dropdown';
+            childrenContainer.style.display = state.expandedItems.includes(item.id) ? 'block' : 'none';
+            
+            const childrenTable = document.createElement('table');
+            childrenTable.className = 'children-table';
+            
+            // Add table header
+            const tableHeader = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            
+            const descHeader = document.createElement('th');
+            descHeader.textContent = 'Description';
+            headerRow.appendChild(descHeader);
+            
+            const unitHeader = document.createElement('th');
+            unitHeader.textContent = 'Unit';
+            headerRow.appendChild(unitHeader);
+            
+            const costHeader = document.createElement('th');
+            costHeader.textContent = 'Cost';
+            headerRow.appendChild(costHeader);
+            
+            tableHeader.appendChild(headerRow);
+            childrenTable.appendChild(tableHeader);
+            
+            // Add table body
+            const tableBody = document.createElement('tbody');
             
             item.childItems.forEach(childId => {
-                const childItem = state.savedItems.find(item => item.id === childId);
+                const childItem = state.savedItems.find(i => i.id === childId);
                 
                 if (childItem) {
-                    const childElem = document.createElement('div');
-                    childElem.className = 'child-item';
+                    const row = document.createElement('tr');
                     
-                    const childHeader = document.createElement('div');
-                    childHeader.className = 'child-item-header';
+                    const descCell = document.createElement('td');
+                    descCell.textContent = childItem.description;
+                    row.appendChild(descCell);
                     
-                    const childTitle = document.createElement('div');
-                    childTitle.className = 'child-item-title';
-                    childTitle.textContent = childItem.description;
+                    const unitCell = document.createElement('td');
+                    unitCell.textContent = getUnitDisplayText(childItem.unit);
+                    row.appendChild(unitCell);
                     
-                    const childDetails = document.createElement('div');
-                    childDetails.className = 'child-item-details';
-                    childDetails.textContent = `${formatCurrency(childItem.results.total)}`;
+                    const costCell = document.createElement('td');
+                    costCell.textContent = formatCurrency(childItem.results.total);
+                    row.appendChild(costCell);
                     
-                    childHeader.appendChild(childTitle);
-                    childHeader.appendChild(childDetails);
-                    
-                    childElem.appendChild(childHeader);
-                    childItems.appendChild(childElem);
+                    tableBody.appendChild(row);
                 }
             });
             
-            itemElem.appendChild(childItems);
+            childrenTable.appendChild(tableBody);
+            childrenContainer.appendChild(childrenTable);
+            itemElem.appendChild(childrenContainer);
         }
         
         elements.savedItemsList.appendChild(itemElem);
@@ -846,7 +877,7 @@ function saveCurrentProject() {
     // Save to localStorage
     saveStateToStorage();
     
-    alert(`Project "${state.currentProjectName}" saved successfully`);
+    showNotification(`Project "${state.currentProjectName}" saved successfully`);
 }
 
 // Save project with a new name
@@ -854,7 +885,7 @@ function saveProjectAs() {
     const newName = elements.newProjectName.value.trim();
     
     if (!newName) {
-        alert('Please enter a project name');
+        showNotification('Please enter a project name', 'error');
         return;
     }
     
@@ -958,7 +989,7 @@ function loadProject(projectName) {
         // Hide the modal
         hideModal(elements.loadProjectModal);
         
-        alert(`Project "${project.name}" loaded successfully`);
+        showNotification(`Project "${project.name}" loaded successfully`);
     }
 }
 
@@ -985,7 +1016,7 @@ function deleteProject(projectName) {
     // Update the projects list
     populateProjectsList();
     
-    alert(`Project "${projectName}" deleted successfully`);
+    showNotification(`Project "${projectName}" deleted successfully`);
 }
 
 // Update the UI based on the current state
@@ -1021,7 +1052,7 @@ function loadStateFromStorage() {
 // Export the current project to PDF
 function exportToPdf() {
     if (state.savedItems.length === 0) {
-        alert('No items to export. Please add some calculations first.');
+        showNotification('No items to export. Please add some calculations first.', 'error');
         return;
     }
     
